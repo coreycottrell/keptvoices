@@ -1,0 +1,28 @@
+# Auto-trigger Netlify deploy on push to main.
+#
+# Why this exists: same pattern as aiciv-inc-site — Netlify GitHub App
+# integrations have been intermittently dropping push events (observed
+# 2026-05-03 → 2026-05-04). This workflow POSTs to the
+# `github-actions-keptvoices` Netlify build hook on every push to main so
+# deploys are guaranteed regardless of the GitHub App's state.
+#
+# Build hook ID: 69f8d59d9c412cd6b1ec32bd
+# Site: keptvoices (3df560c5-5967-4502-aa8d-82045c83a3cc) → keptvoices.com
+#
+# If the Netlify GitHub App is connected, BOTH triggers will fire on push —
+# Netlify de-dupes concurrent builds, so this is harmless.
+
+name: Trigger Netlify Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST to Netlify build hook
+        run: |
+          curl -fsS -X POST -d '{}' \
+            https://api.netlify.com/build_hooks/69f8d59d9c412cd6b1ec32bd
+          echo "Triggered Netlify build for commit ${GITHUB_SHA}"
