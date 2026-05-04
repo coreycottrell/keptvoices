@@ -774,7 +774,8 @@ nav {
       audiobookLink.href = publicUrl;
       audiobookLink.textContent = publicUrl;
       var sizeKb = data && data.size_bytes ? Math.round(data.size_bytes / 1024) : null;
-      audiobookMeta.textContent = (data && data.chunk_count ? data.chunk_count + ' answers stitched' : '')
+      var n = data && data.chunk_count;
+      audiobookMeta.textContent = (n ? n + ' answer' + (n === 1 ? '' : 's') + ' stitched' : '')
         + (sizeKb ? ' · ' + sizeKb + ' KB' : '');
       audiobookReady.style.display = 'block';
       finishChapterWrap.style.display = 'none';
