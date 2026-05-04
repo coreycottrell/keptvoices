@@ -9,8 +9,12 @@
 <meta property="og:url" content="https://ai-civ.com/keptvoices/">
 <meta property="og:title" content="Kept Voices — Tell us a story. We'll help you write it.">
 <meta property="og:description" content="Mom answers a few questions. AI shapes them into a real chapter. Free. No app. No account.">
+<meta property="og:image" content="https://ai-civ.com/keptvoices/img/og-image.jpg">
+<meta property="og:image:width" content="2752">
+<meta property="og:image:height" content="1536">
 <meta property="og:site_name" content="Kept Voices">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ai-civ.com/keptvoices/img/og-image.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -162,6 +166,14 @@ section { padding: 5rem 1.5rem; }
   text-align: center;
   padding: 7rem 1.5rem 4rem;
   background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 60%);
+  position: relative;
+}
+.hero-image {
+  margin-top: 2.5rem;
+  max-width: 720px;
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(42,36,32,0.12);
   position: relative;
 }
 .hero::before {
@@ -463,6 +475,49 @@ section { padding: 5rem 1.5rem; }
 }
 .chat-send-btn:hover { background: var(--rich-brown); }
 .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Mic button */
+.mic-btn {
+  background: transparent;
+  border: none;
+  padding: 0 0.75rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+.mic-btn:hover { color: var(--accent-warm); }
+.mic-btn.recording {
+  color: #c44040;
+  animation: micPulse 1s ease-in-out infinite;
+}
+.mic-btn.unsupported { display: none; }
+@keyframes micPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+/* Voice toggle */
+.voice-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--border-light);
+  cursor: pointer;
+  user-select: none;
+}
+.voice-toggle input[type="checkbox"] {
+  accent-color: var(--deep-gold);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
 
 /* Chapter preview (shown after finalize) */
 .chapter-preview-container {
@@ -830,6 +885,7 @@ footer .footer-copy {
       <span>&middot;</span>
       <span><strong>Mom's voice never leaves our servers</strong></span>
     </div>
+    <img class="hero-image" src="img/hero.jpg" alt="Grandmother and grandchild sharing a moment at the kitchen table in warm golden light" loading="eager" width="2752" height="1536">
   </div>
 </section>
 
@@ -838,6 +894,7 @@ footer .footer-copy {
   <div class="container">
     <span class="section-label">How It Works</span>
     <h2 class="section-title">Three steps to a chapter you'll keep.</h2>
+    <img src="img/how-it-works.jpg" alt="Three steps: You Record, We Listen and Write, You Receive" loading="lazy" style="width:100%; max-width:800px; border-radius:var(--radius); margin-top:1.5rem; box-shadow:0 8px 30px rgba(42,36,32,0.08);">
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num">1</div>
@@ -895,7 +952,9 @@ footer .footer-copy {
     <span class="section-label">Sample</span>
     <h2 class="section-title">Here's what one conversation becomes.</h2>
     <p class="section-sub">A real chapter from a real Kept Voices session. She typed her answers on her iPhone over a quiet afternoon. Our AI asked the follow-ups. Read what we made of her words.</p>
-    <div class="sample-chapter-card">
+    <div style="display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap; margin-top:2rem;">
+    <img src="img/sample-book.jpg" alt="Mom Stories hardcover book open on a wooden table" loading="lazy" style="width:280px; height:280px; object-fit:cover; border-radius:var(--radius); box-shadow:0 8px 30px rgba(42,36,32,0.1); flex-shrink:0;">
+    <div class="sample-chapter-card" style="margin-top:0; flex:1; min-width:300px;">
       <div class="chapter-title">The Porch and the Hands</div>
       <div class="chapter-meta">Margaret, 73 &mdash; on her grandmother's porch and her father's workshop</div>
       <div class="chapter-body">
@@ -910,6 +969,7 @@ footer .footer-copy {
         </audio>
       </div>
     </div>
+    </div><!-- end flex wrapper -->
   </div>
 </section>
 
@@ -928,8 +988,15 @@ footer .footer-copy {
       </div>
       <div class="chat-input-row" id="chat-input-row">
         <textarea id="chat-input" placeholder="Type your answer..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendResponse();}"></textarea>
+        <button class="mic-btn" id="mic-btn" aria-label="Record your answer" title="Speak your answer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
         <button class="chat-send-btn" id="chat-send-btn" onclick="sendResponse()">Send</button>
       </div>
+      <label class="voice-toggle" id="voice-toggle">
+        <input type="checkbox" id="voice-playback-toggle" checked>
+        <span>Voice playback</span>
+      </label>
     </div>
 
     <!-- Chapter preview (replaces chat after finalize) -->
@@ -1117,6 +1184,87 @@ footer .footer-copy {
   const previewTitle   = document.getElementById('preview-title');
   const previewBody    = document.getElementById('preview-body');
   const upgradeGate    = document.getElementById('upgrade-gate');
+  const micBtn         = document.getElementById('mic-btn');
+  const voiceToggle    = document.getElementById('voice-playback-toggle');
+
+  // ── Speech Recognition (voice input) ──
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var recognition = null;
+  var isRecording = false;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function() {
+      isRecording = true;
+      micBtn.classList.add('recording');
+      micBtn.setAttribute('title', 'Listening... click to stop');
+    };
+
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      chatInput.value = transcript;
+      autoResizeTextarea();
+      chatInput.focus();
+    };
+
+    recognition.onerror = function(event) {
+      console.warn('Speech recognition error:', event.error);
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.setAttribute('title', 'Speak your answer');
+    };
+
+    recognition.onend = function() {
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.setAttribute('title', 'Speak your answer');
+    };
+
+    micBtn.addEventListener('click', function() {
+      if (isRecording) {
+        recognition.stop();
+      } else {
+        recognition.start();
+      }
+    });
+  } else {
+    // Browser doesn't support SpeechRecognition — hide mic button
+    micBtn.classList.add('unsupported');
+  }
+
+  // ── Browser TTS (for AI follow-up questions after q7) ──
+  var ttsVoice = null;
+  function loadTtsVoice() {
+    var voices = speechSynthesis.getVoices();
+    if (voices.length === 0) return;
+    // Prefer warm British male, fallback to any English male, fallback to any English
+    ttsVoice = voices.find(function(v) {
+      return v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male');
+    }) || voices.find(function(v) {
+      return v.lang.startsWith('en') && v.name.toLowerCase().includes('male');
+    }) || voices.find(function(v) {
+      return v.lang.startsWith('en');
+    }) || null;
+  }
+  if (typeof speechSynthesis !== 'undefined') {
+    loadTtsVoice();
+    speechSynthesis.onvoiceschanged = loadTtsVoice;
+  }
+
+  function speakText(text) {
+    if (typeof speechSynthesis === 'undefined') return;
+    if (!voiceToggle.checked) return;
+    speechSynthesis.cancel(); // stop any prior utterance
+    var utterance = new SpeechSynthesisUtterance(text);
+    if (ttsVoice) utterance.voice = ttsVoice;
+    utterance.rate = 0.95;
+    utterance.pitch = 0.95;
+    speechSynthesis.speak(utterance);
+  }
 
   // ── Open chat ──
   window.openChat = function() {
@@ -1208,7 +1356,13 @@ footer .footer-copy {
       } else if (data.audio_url) {
         audioUrl = data.audio_url;
       }
-      addAudioPlayer(audioUrl);
+
+      if (audioUrl) {
+        addAudioPlayer(audioUrl);
+      } else if (questionCount > 7) {
+        // No pre-recorded or API audio — use browser TTS
+        speakText(data.next_question_text);
+      }
 
       setInputEnabled(true);
       chatInput.focus();
