@@ -500,6 +500,118 @@ section { padding: 5rem 1.5rem; }
   50% { transform: scale(1.15); opacity: 0.7; }
 }
 
+/* ============================================================
+   WELCOME / ONBOARDING OVERLAY
+   ============================================================ */
+.welcome-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(42,36,32,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+.welcome-overlay.active { display: flex; }
+.welcome-card {
+  background: var(--warm-white);
+  border-radius: var(--radius);
+  max-width: 480px;
+  width: 100%;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 16px 60px rgba(42,36,32,0.18);
+  animation: welcomeIn 0.35s ease-out;
+}
+@keyframes welcomeIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.welcome-card h2 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+.welcome-card .welcome-intro {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.welcome-card label.welcome-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+.welcome-card .name-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border-medium);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: var(--sans);
+  background: var(--warm-white);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 1.25rem;
+}
+.welcome-card .name-input:focus { border-color: var(--gold); }
+.welcome-card .name-input::placeholder { color: var(--text-muted); }
+.welcome-card .topic-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+.topic-chip {
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--border-medium);
+  border-radius: 100px;
+  background: var(--warm-white);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.topic-chip:hover { border-color: var(--gold); color: var(--deep-gold); }
+.topic-chip.selected {
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border-color: var(--charcoal);
+}
+.welcome-start-btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.welcome-start-btn:hover { background: var(--rich-brown); transform: translateY(-1px); }
+.welcome-start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
 /* Voice toggle */
 .voice-toggle {
   display: flex;
@@ -978,6 +1090,28 @@ footer .footer-copy {
   </div>
 </section>
 
+<!-- ═══════ WELCOME OVERLAY ═══════ -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-card">
+    <h2>Hi. I'm Kept Voices.</h2>
+    <p class="welcome-intro">We'll spend about 5 minutes recording one chapter of a story. It's free.</p>
+    <label class="welcome-label" for="storyteller-name">First &mdash; who am I interviewing today?</label>
+    <input class="name-input" type="text" id="storyteller-name" placeholder="Mom, Grandpa Joe, myself..." autocomplete="off">
+    <span class="topic-label">What part of their life would you like to start with?</span>
+    <div class="topic-chips" id="topic-chips">
+      <button class="topic-chip" data-topic="childhood">Childhood</button>
+      <button class="topic-chip" data-topic="family_roots">Family roots</button>
+      <button class="topic-chip" data-topic="career_work">Career &amp; work</button>
+      <button class="topic-chip" data-topic="love_relationships">Love &amp; relationships</button>
+      <button class="topic-chip" data-topic="travel_adventures">Travel &amp; adventures</button>
+      <button class="topic-chip" data-topic="hardships">Hardships</button>
+      <button class="topic-chip" data-topic="wisdom">Wisdom they've shared</button>
+      <button class="topic-chip" data-topic="random">Surprise me</button>
+    </div>
+    <button class="welcome-start-btn" id="welcome-start-btn" disabled onclick="beginChat()">Start</button>
+  </div>
+</div>
+
 <!-- ═══════ CHAT SECTION (hidden until CTA) ═══════ -->
 <section class="chat-section" id="chat-section">
   <div class="container">
@@ -1178,6 +1312,10 @@ footer .footer-copy {
   let sending = false;
   let chapterTitle = '';
 
+  // Welcome flow state
+  let storytellerName = '';
+  let selectedCategory = '';
+
   // ── DOM refs ──
   const chatSection    = document.getElementById('chat-section');
   const chatMessages   = document.getElementById('chat-messages');
@@ -1191,54 +1329,188 @@ footer .footer-copy {
   const upgradeGate    = document.getElementById('upgrade-gate');
   const micBtn         = document.getElementById('mic-btn');
   const voiceToggle    = document.getElementById('voice-playback-toggle');
+  const welcomeOverlay = document.getElementById('welcome-overlay');
+  const welcomeStartBtn = document.getElementById('welcome-start-btn');
+  const nameInput      = document.getElementById('storyteller-name');
+  const topicChipsEl   = document.getElementById('topic-chips');
 
-  // ── Speech Recognition (voice input) ──
+  // ── Welcome flow: topic chips ──
+  topicChipsEl.addEventListener('click', function(e) {
+    var chip = e.target.closest('.topic-chip');
+    if (!chip) return;
+    // Deselect all, select this one
+    topicChipsEl.querySelectorAll('.topic-chip').forEach(function(c) { c.classList.remove('selected'); });
+    chip.classList.add('selected');
+    selectedCategory = chip.getAttribute('data-topic');
+    updateStartBtn();
+  });
+
+  nameInput.addEventListener('input', updateStartBtn);
+
+  function updateStartBtn() {
+    var hasName = nameInput.value.trim().length > 0;
+    var hasTopic = selectedCategory.length > 0;
+    welcomeStartBtn.disabled = !(hasName && hasTopic);
+  }
+
+  // ── Open welcome overlay (replaces old openChat) ──
+  window.openChat = function() {
+    welcomeOverlay.classList.add('active');
+    setTimeout(function() { nameInput.focus(); }, 100);
+  };
+
+  // ── Begin chat after welcome ──
+  window.beginChat = function() {
+    storytellerName = nameInput.value.trim();
+    if (!storytellerName || !selectedCategory) return;
+
+    // Close welcome overlay
+    welcomeOverlay.classList.remove('active');
+
+    // Show chat section
+    chatSection.classList.add('active');
+    chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (!chatActive) {
+      chatActive = true;
+      // Build a personalized intro message and render it via Kokoro TTS
+      var categoryLabels = {
+        childhood: 'childhood',
+        family_roots: 'family roots',
+        career_work: 'career and work',
+        love_relationships: 'love and relationships',
+        travel_adventures: 'travel and adventures',
+        hardships: 'hardships',
+        wisdom: 'wisdom',
+        random: 'whatever comes to mind'
+      };
+      var catLabel = categoryLabels[selectedCategory] || selectedCategory;
+      var introText = "Hi! It's so nice to meet " + storytellerName + ". " +
+        "Let's spend a few minutes on " + catLabel + ". " +
+        "Take your time. I'll listen carefully, and then I'll ask questions that build on what you say.";
+
+      // Show intro as incoming message
+      addMessage(introText, 'incoming');
+
+      // Play intro via Kokoro TTS
+      if (voiceToggle.checked) {
+        var thinkingEl = document.createElement('div');
+        thinkingEl.className = 'typing-indicator';
+        thinkingEl.id = 'tts-intro-thinking';
+        thinkingEl.innerHTML = '<span></span><span></span><span></span>';
+        chatMessages.appendChild(thinkingEl);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        fetchKokoroAudio(introText)
+          .then(function(audioUrl) {
+            var thinking = document.getElementById('tts-intro-thinking');
+            if (thinking) thinking.remove();
+            addAudioPlayer(audioUrl);
+            // After intro audio, fetch the first real question
+            fetchNextQuestion(null);
+          })
+          .catch(function(err) {
+            console.warn('Kokoro TTS failed for intro, continuing:', err);
+            var thinking = document.getElementById('tts-intro-thinking');
+            if (thinking) thinking.remove();
+            fetchNextQuestion(null);
+          });
+      } else {
+        // No voice — just fetch first question after a brief pause
+        setTimeout(function() { fetchNextQuestion(null); }, 800);
+      }
+    }
+  };
+
+  // ── Speech Recognition (voice input) — CONTINUOUS MODE ──
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var recognition = null;
   var isRecording = false;
+  var finalTranscript = '';
+  var silenceTimer = null;
 
   if (SpeechRecognition) {
+    micBtn.addEventListener('click', function() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+  } else {
+    micBtn.classList.add('unsupported');
+  }
+
+  function startRecording() {
     recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    finalTranscript = '';
 
     recognition.onstart = function() {
       isRecording = true;
       micBtn.classList.add('recording');
-      micBtn.setAttribute('title', 'Listening... click to stop');
+      micBtn.setAttribute('title', 'Click to stop recording');
+      micBtn.setAttribute('aria-label', 'Stop recording');
     };
 
     recognition.onresult = function(event) {
-      var transcript = event.results[0][0].transcript;
-      chatInput.value = transcript;
+      var interim = '';
+      // Reset silence timer on each result
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(function() {
+        // Auto-stop after 30s of total silence (safety net)
+        if (isRecording) stopRecording();
+      }, 30000);
+
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      chatInput.value = finalTranscript + interim;
       autoResizeTextarea();
-      chatInput.focus();
     };
 
     recognition.onerror = function(event) {
+      if (event.error === 'no-speech') return; // ignore silence
       console.warn('Speech recognition error:', event.error);
-      isRecording = false;
-      micBtn.classList.remove('recording');
-      micBtn.setAttribute('title', 'Speak your answer');
+      stopRecordingUI();
     };
 
     recognition.onend = function() {
-      isRecording = false;
-      micBtn.classList.remove('recording');
-      micBtn.setAttribute('title', 'Speak your answer');
+      // If user didn't explicitly stop, restart to maintain continuous listening
+      if (isRecording) {
+        try { recognition.start(); } catch(e) { stopRecordingUI(); }
+      }
     };
 
-    micBtn.addEventListener('click', function() {
-      if (isRecording) {
-        recognition.stop();
-      } else {
-        recognition.start();
-      }
-    });
-  } else {
-    // Browser doesn't support SpeechRecognition — hide mic button
-    micBtn.classList.add('unsupported');
+    try {
+      recognition.start();
+    } catch(e) {
+      console.warn('Could not start recognition:', e);
+    }
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    clearTimeout(silenceTimer);
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+    stopRecordingUI();
+    // Leave transcript in input for user to review/edit before sending
+    chatInput.focus();
+  }
+
+  function stopRecordingUI() {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.setAttribute('title', 'Speak your answer');
+    micBtn.setAttribute('aria-label', 'Record your answer');
   }
 
   // ── Kokoro TTS (server-side, bm_george voice — all questions) ──
@@ -1262,16 +1534,6 @@ footer .footer-copy {
       return url;
     });
   }
-
-  // ── Open chat ──
-  window.openChat = function() {
-    chatSection.classList.add('active');
-    chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (!chatActive) {
-      chatActive = true;
-      fetchNextQuestion(null);
-    }
-  };
 
   // ── Add message bubble ──
   function addMessage(text, type) {
@@ -1318,12 +1580,17 @@ footer .footer-copy {
     setInputEnabled(false);
     showTyping();
 
+    // Build storyteller_id from name (lowercase slug)
+    var storytellerId = storytellerName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
     const body = {
       session_id: sessionId,
       question_count: questionCount,
-      category: 'childhood',
+      category: selectedCategory || 'childhood',
       last_response: lastResponse,
-      all_qa_pairs: allQaPairs
+      all_qa_pairs: allQaPairs,
+      storyteller_id: storytellerId,
+      storyteller_name: storytellerName
     };
 
     fetch(API_BASE + '/chat', {
@@ -1389,6 +1656,9 @@ footer .footer-copy {
   // ── Send user response ──
   window.sendResponse = function() {
     if (sending) return;
+    // Stop recording if still active
+    if (isRecording) stopRecording();
+
     var text = chatInput.value.trim();
     if (!text) return;
 
@@ -1430,7 +1700,8 @@ footer .footer-copy {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         session_id: sessionId,
-        all_qa_pairs: allQaPairs
+        all_qa_pairs: allQaPairs,
+        storyteller_name: storytellerName
       })
     })
     .then(function(res) {

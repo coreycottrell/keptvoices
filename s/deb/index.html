@@ -460,45 +460,91 @@ nav {
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
   });
 
-  // ── Speech Recognition ──
+  // ── Speech Recognition — CONTINUOUS MODE ──
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var recognition = null;
   var isRecording = false;
+  var finalTranscript = '';
+  var silenceTimer = null;
 
   if (SpeechRecognition) {
+    micBtn.addEventListener('click', function() {
+      if (isRecording) { stopRecording(); }
+      else { startRecording(); }
+    });
+  } else {
+    micBtn.classList.add('unsupported');
+  }
+
+  function startRecording() {
     recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    finalTranscript = '';
 
     recognition.onstart = function() {
       isRecording = true;
       micBtn.classList.add('recording');
-      micBtn.setAttribute('title', 'Listening... tap to stop');
-    };
-    recognition.onresult = function(event) {
-      var transcript = event.results[0][0].transcript;
-      chatInput.value = transcript;
-      chatInput.dispatchEvent(new Event('input'));
-      chatInput.focus();
-    };
-    recognition.onerror = function() {
-      isRecording = false;
-      micBtn.classList.remove('recording');
-      micBtn.setAttribute('title', 'Speak your answer');
-    };
-    recognition.onend = function() {
-      isRecording = false;
-      micBtn.classList.remove('recording');
-      micBtn.setAttribute('title', 'Speak your answer');
+      micBtn.setAttribute('title', 'Tap to stop recording');
+      micBtn.setAttribute('aria-label', 'Stop recording');
     };
 
-    micBtn.addEventListener('click', function() {
-      if (isRecording) { recognition.stop(); }
-      else { recognition.start(); }
-    });
-  } else {
-    micBtn.classList.add('unsupported');
+    recognition.onresult = function(event) {
+      var interim = '';
+      // Reset silence timer on each result
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(function() {
+        // Auto-stop after 30s of total silence (safety net)
+        if (isRecording) stopRecording();
+      }, 30000);
+
+      for (var i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      chatInput.value = finalTranscript + interim;
+      chatInput.dispatchEvent(new Event('input'));
+    };
+
+    recognition.onerror = function(event) {
+      if (event.error === 'no-speech') return; // ignore silence
+      console.warn('Speech recognition error:', event.error);
+      stopRecordingUI();
+    };
+
+    recognition.onend = function() {
+      // If user didn't explicitly stop, restart to maintain continuous listening
+      if (isRecording) {
+        try { recognition.start(); } catch(e) { stopRecordingUI(); }
+      }
+    };
+
+    try {
+      recognition.start();
+    } catch(e) {
+      console.warn('Could not start recognition:', e);
+    }
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    clearTimeout(silenceTimer);
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+    stopRecordingUI();
+    chatInput.focus();
+  }
+
+  function stopRecordingUI() {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micBtn.setAttribute('title', 'Speak your answer');
+    micBtn.setAttribute('aria-label', 'Speak your answer');
   }
 
   // ── Kokoro TTS (server-side, bm_george voice — all questions) ──
@@ -819,6 +865,8 @@ nav {
   // ── Send user message ──
   window.sendMessage = function() {
     if (sending) return;
+    // Stop recording if still active
+    if (isRecording) stopRecording();
     var text = chatInput.value.trim();
     if (!text) return;
 
