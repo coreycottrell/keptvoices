@@ -802,6 +802,14 @@ section { padding: 5rem 1.5rem; }
   font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
   padding: 0.2rem 0.6rem; border-radius: 4px;
 }
+.price-availability {
+  display: block;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--deep-gold);
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+}
+.price-availability .dot { color: var(--gold); margin: 0 0.35em; }
 .price-card h3 {
   font-family: var(--serif);
   font-size: 1.1rem; font-weight: 600;
@@ -2170,7 +2178,7 @@ footer .footer-copy {
         <a href="#" class="btn-secondary" onclick="openChat(); return false;">Start with Free Chapter</a>
       </div>
       <div class="price-card featured">
-        <span class="section-label" style="margin-bottom:0.75rem;">Available now &middot; Hardcover ships June 2026</span>
+        <span class="price-availability">Available now <span class="dot">&middot;</span> Hardcover ships June 2026</span>
         <h3>Their Voice</h3>
         <div class="price-amount">$129</div>
         <ul>
