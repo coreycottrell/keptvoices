@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deb's Stories — Kept Voices</title>
+<meta name="description" content="Deb's personal storytelling page. A conversation that builds over weeks into a book of memories.">
+<meta property="og:title" content="Deb's Stories — Kept Voices">
+<meta property="og:description" content="A conversation that builds over weeks into a book of memories.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ai-civ.com/keptvoices/s/deb/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --warm-white: #faf8f5;
+  --cream: #f5f0e8;
+  --light-gold: #f0e6d0;
+  --gold: #c9a84c;
+  --deep-gold: #a07830;
+  --warm-brown: #5c4a32;
+  --rich-brown: #3d2e1e;
+  --charcoal: #2a2420;
+  --soft-black: #1a1614;
+  --text-primary: #2a2420;
+  --text-secondary: #6b5d50;
+  --text-muted: #9a8b7a;
+  --accent-warm: #c47f3a;
+  --accent-sage: #7a9a7e;
+  --border-light: rgba(201, 168, 76, 0.15);
+  --border-medium: rgba(201, 168, 76, 0.25);
+  --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--warm-white);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: var(--accent-warm); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250, 248, 245, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-weight: 700; font-size: 1.25rem;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+.nav-logo:hover { text-decoration: none; }
+.nav-right {
+  display: flex; align-items: center; gap: 1rem;
+}
+.nav-right a {
+  color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;
+  text-decoration: none;
+}
+.nav-right a:hover { color: var(--accent-warm); text-decoration: none; }
+
+/* ── HERO ── */
+.hero {
+  padding: 6rem 1.5rem 2rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 100%);
+}
+.hero-content { max-width: 600px; margin: 0 auto; }
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--charcoal);
+  margin-bottom: 0.75rem;
+}
+.hero p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── TIMELINE ── */
+.timeline-section {
+  padding: 1rem 1rem 0;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.timeline-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem;
+}
+.timeline-header h2 {
+  font-family: var(--serif);
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--charcoal);
+}
+.toggle-history-btn {
+  background: none; border: none;
+  color: var(--accent-warm);
+  font-size: 0.85rem; font-weight: 500;
+  cursor: pointer;
+  font-family: var(--sans);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.toggle-history-btn:hover { background: rgba(196,127,58,0.08); }
+
+.timeline-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.timeline-turns {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.turn-pair {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.turn-pair:last-child { border-bottom: none; }
+
+.turn-pair.collapsed { display: none; }
+
+.turn-george {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+.turn-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+  color: white;
+}
+.turn-avatar.george { background: var(--charcoal); }
+.turn-avatar.deb { background: var(--accent-sage); }
+
+.turn-bubble {
+  flex: 1;
+  min-width: 0;
+}
+.turn-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+.turn-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+.turn-george .turn-text {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.turn-audio-btn {
+  background: none; border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-left: 0.25rem;
+  font-size: 1rem;
+  transition: color 0.2s;
+  flex-shrink: 0;
+  align-self: center;
+}
+.turn-audio-btn:hover { color: var(--accent-warm); }
+.turn-audio-btn.playing { color: var(--accent-warm); }
+
+.turn-deb {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.turn-ts {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+/* ── CHAT INPUT (fixed at bottom) ── */
+.chat-dock {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--warm-white);
+  border-top: 1px solid var(--border-medium);
+  padding: 0.75rem 1rem;
+  z-index: 50;
+  box-shadow: 0 -4px 20px rgba(42,36,32,0.06);
+}
+.chat-dock-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+.chat-dock textarea {
+  flex: 1;
+  border: 1.5px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: var(--sans);
+  resize: none;
+  outline: none;
+  background: var(--warm-white);
+  color: var(--text-primary);
+  min-height: 48px;
+  max-height: 120px;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+.chat-dock textarea:focus { border-color: var(--gold); }
+.chat-dock textarea::placeholder { color: var(--text-muted); }
+
+.dock-btn {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.send-btn {
+  background: var(--charcoal);
+  color: var(--warm-white);
+}
+.send-btn:hover { background: var(--rich-brown); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mic-btn {
+  background: transparent;
+  border: 1.5px solid var(--border-medium);
+  color: var(--text-muted);
+}
+.mic-btn:hover { color: var(--accent-warm); border-color: var(--accent-warm); }
+.mic-btn.recording {
+  color: #c44040;
+  border-color: #c44040;
+  animation: micPulse 1s ease-in-out infinite;
+}
+.mic-btn.unsupported { display: none; }
+
+@keyframes micPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.7; }
+}
+
+.voice-row {
+  max-width: 640px;
+  margin: 0.25rem auto 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.voice-row input[type="checkbox"] {
+  accent-color: var(--deep-gold);
+  width: 14px; height: 14px;
+  cursor: pointer;
+}
+
+/* ── TYPING INDICATOR ── */
+.typing-indicator {
+  display: flex; gap: 4px;
+  padding: 0.75rem;
+  align-items: center;
+}
+.typing-indicator span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-muted);
+  animation: blink 1.4s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}
+
+/* ── FOOTER spacer ── */
+.bottom-spacer { height: 140px; }
+
+/* ── LOADING ── */
+.loading-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--deep-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 0.75rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ERROR TOAST ── */
+.error-toast {
+  position: fixed;
+  top: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: #c44040; color: white;
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem; font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.error-toast.visible { opacity: 1; pointer-events: auto; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .hero { padding: 5rem 1rem 1.5rem; }
+  .hero h1 { font-size: 1.5rem; }
+  .timeline-section { padding: 0.75rem 0.75rem 0; }
+  .chat-dock { padding: 0.5rem 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/keptvoices/">Kept Voices</a>
+  <div class="nav-right">
+    <a href="/keptvoices/">Home</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Hi Deb. George here.<br>Ready to keep telling stories?</h1>
+    <p>Your conversation builds over time. Each visit adds another piece. Whenever you feel like talking, just type or tap the microphone below.</p>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<div class="timeline-section" id="timeline-section">
+  <div class="timeline-header">
+    <h2>Your Story So Far</h2>
+    <button class="toggle-history-btn" id="toggle-history-btn" style="display:none;">Show all</button>
+  </div>
+  <div id="timeline-loading" class="loading-state">
+    <div class="spinner"></div>
+    <div style="color:var(--text-muted); font-size:0.9rem;">Loading your stories...</div>
+  </div>
+  <div id="timeline-empty" class="timeline-empty" style="display:none;">
+    No stories yet. Say hello below and George will ask you something worth remembering.
+  </div>
+  <div class="timeline-turns" id="timeline-turns"></div>
+</div>
+
+<!-- TYPING INDICATOR (shown when waiting for George) -->
+<div id="typing-area" style="max-width:640px; margin:0 auto; padding:0 1rem;"></div>
+
+<div class="bottom-spacer"></div>
+
+<!-- ERROR TOAST -->
+<div class="error-toast" id="error-toast"></div>
+
+<!-- CHAT DOCK -->
+<div class="chat-dock">
+  <div class="chat-dock-inner">
+    <textarea id="chat-input" placeholder="Tell George something..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
+    <button class="dock-btn mic-btn" id="mic-btn" aria-label="Speak your answer" title="Speak your answer">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="1" width="6" height="11" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+    </button>
+    <button class="dock-btn send-btn" id="send-btn" onclick="sendMessage()" aria-label="Send" title="Send">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+  <label class="voice-row">
+    <input type="checkbox" id="voice-toggle" checked>
+    <span>Read George's questions aloud</span>
+  </label>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Config ──
+  var STORYTELLER_ID = 'deb';
+  var STORYTELLER_NAME = 'Deb';
+  var API_BASE = 'https://keptvoices-api.ai-civ.com/api/keptvoices';
+  var COLLAPSED_TURN_COUNT = 3; // show last N turns by default
+
+  // ── State ──
+  var sessionId = STORYTELLER_ID + '-' + Date.now();
+  var questionCount = 0;
+  var allQaPairs = [];
+  var allHistoryTurns = []; // full timeline from server
+  var currentQuestion = '';
+  var sending = false;
+  var historyExpanded = false;
+
+  // ── DOM refs ──
+  var timelineLoading = document.getElementById('timeline-loading');
+  var timelineEmpty = document.getElementById('timeline-empty');
+  var timelineTurns = document.getElementById('timeline-turns');
+  var toggleBtn = document.getElementById('toggle-history-btn');
+  var typingArea = document.getElementById('typing-area');
+  var chatInput = document.getElementById('chat-input');
+  var sendBtn = document.getElementById('send-btn');
+  var micBtn = document.getElementById('mic-btn');
+  var voiceToggle = document.getElementById('voice-toggle');
+  var errorToast = document.getElementById('error-toast');
+
+  // ── Auto-resize textarea ──
+  chatInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+
+  // ── Speech Recognition ──
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var recognition = null;
+  var isRecording = false;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function() {
+      isRecording = true;
+      micBtn.classList.add('recording');
+      micBtn.setAttribute('title', 'Listening... tap to stop');
+    };
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      chatInput.value = transcript;
+      chatInput.dispatchEvent(new Event('input'));
+      chatInput.focus();
+    };
+    recognition.onerror = function() {
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.setAttribute('title', 'Speak your answer');
+    };
+    recognition.onend = function() {
+      isRecording = false;
+      micBtn.classList.remove('recording');
+      micBtn.setAttribute('title', 'Speak your answer');
+    };
+
+    micBtn.addEventListener('click', function() {
+      if (isRecording) { recognition.stop(); }
+      else { recognition.start(); }
+    });
+  } else {
+    micBtn.classList.add('unsupported');
+  }
+
+  // ── Browser TTS ──
+  var ttsVoice = null;
+  function loadTtsVoice() {
+    var voices = speechSynthesis.getVoices();
+    if (voices.length === 0) return;
+    ttsVoice = voices.find(function(v) {
+      return v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male');
+    }) || voices.find(function(v) {
+      return v.lang.startsWith('en') && v.name.toLowerCase().includes('male');
+    }) || voices.find(function(v) {
+      return v.lang.startsWith('en');
+    }) || null;
+  }
+  if (typeof speechSynthesis !== 'undefined') {
+    loadTtsVoice();
+    speechSynthesis.onvoiceschanged = loadTtsVoice;
+  }
+
+  function speakText(text) {
+    if (typeof speechSynthesis === 'undefined') return;
+    if (!voiceToggle.checked) return;
+    speechSynthesis.cancel();
+    var utterance = new SpeechSynthesisUtterance(text);
+    if (ttsVoice) utterance.voice = ttsVoice;
+    utterance.rate = 0.95;
+    utterance.pitch = 0.95;
+    speechSynthesis.speak(utterance);
+  }
+
+  // ── Error display ──
+  function showError(msg) {
+    errorToast.textContent = msg;
+    errorToast.classList.add('visible');
+    setTimeout(function() { errorToast.classList.remove('visible'); }, 4000);
+  }
+
+  // ── Format timestamp ──
+  function formatTs(ts) {
+    if (!ts) return '';
+    try {
+      var d = new Date(ts);
+      var now = new Date();
+      var diffDays = Math.floor((now - d) / 86400000);
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return diffDays + ' days ago';
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } catch(e) { return ''; }
+  }
+
+  // ── Render a single turn pair ──
+  function renderTurnPair(turn, index, totalTurns, isNew) {
+    var pair = document.createElement('div');
+    pair.className = 'turn-pair';
+    if (!isNew && !historyExpanded && totalTurns > COLLAPSED_TURN_COUNT && index < totalTurns - COLLAPSED_TURN_COUNT) {
+      pair.classList.add('collapsed');
+    }
+
+    var ts = formatTs(turn.ts);
+
+    // George's question
+    var georgeHtml = '<div class="turn-george">' +
+      '<div class="turn-avatar george">G</div>' +
+      '<div class="turn-bubble">' +
+        '<div class="turn-name">George</div>' +
+        '<div class="turn-text">' + escapeHtml(turn.question) + '</div>' +
+        (ts ? '<div class="turn-ts">' + ts + '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+    // Deb's response (if exists)
+    var debHtml = '';
+    if (turn.response) {
+      debHtml = '<div class="turn-deb">' +
+        '<div class="turn-avatar deb">D</div>' +
+        '<div class="turn-bubble">' +
+          '<div class="turn-name">' + STORYTELLER_NAME + '</div>' +
+          '<div class="turn-text">' + escapeHtml(turn.response) + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    pair.innerHTML = georgeHtml + debHtml;
+
+    if (isNew) {
+      pair.style.animation = 'fadeIn 0.4s ease-out';
+    }
+
+    return pair;
+  }
+
+  // ── Render full timeline ──
+  function renderTimeline(sessions) {
+    timelineTurns.innerHTML = '';
+
+    // Flatten all turns across sessions
+    allHistoryTurns = [];
+    for (var i = 0; i < sessions.length; i++) {
+      var turns = sessions[i].turns;
+      for (var j = 0; j < turns.length; j++) {
+        allHistoryTurns.push(turns[j]);
+      }
+    }
+
+    if (allHistoryTurns.length === 0) {
+      timelineEmpty.style.display = 'block';
+      toggleBtn.style.display = 'none';
+      return;
+    }
+
+    timelineEmpty.style.display = 'none';
+
+    // Show toggle button if more turns than collapsed count
+    if (allHistoryTurns.length > COLLAPSED_TURN_COUNT) {
+      toggleBtn.style.display = 'inline-block';
+      toggleBtn.textContent = historyExpanded
+        ? 'Show recent only'
+        : 'Show all (' + allHistoryTurns.length + ' turns)';
+    } else {
+      toggleBtn.style.display = 'none';
+    }
+
+    for (var k = 0; k < allHistoryTurns.length; k++) {
+      var el = renderTurnPair(allHistoryTurns[k], k, allHistoryTurns.length, false);
+      timelineTurns.appendChild(el);
+    }
+
+    // Derive questionCount from history for the API
+    questionCount = allHistoryTurns.length;
+    // Populate allQaPairs for context passing
+    allQaPairs = [];
+    for (var m = 0; m < allHistoryTurns.length; m++) {
+      if (allHistoryTurns[m].response) {
+        allQaPairs.push({
+          question: allHistoryTurns[m].question,
+          response: allHistoryTurns[m].response
+        });
+      }
+    }
+  }
+
+  // ── Toggle expanded/collapsed ──
+  toggleBtn.addEventListener('click', function() {
+    historyExpanded = !historyExpanded;
+    var pairs = timelineTurns.querySelectorAll('.turn-pair');
+    var total = pairs.length;
+
+    for (var i = 0; i < total; i++) {
+      if (historyExpanded) {
+        pairs[i].classList.remove('collapsed');
+      } else {
+        if (i < total - COLLAPSED_TURN_COUNT) {
+          pairs[i].classList.add('collapsed');
+        }
+      }
+    }
+
+    toggleBtn.textContent = historyExpanded
+      ? 'Show recent only'
+      : 'Show all (' + total + ' turns)';
+
+    if (!historyExpanded) {
+      document.getElementById('timeline-section').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // ── Add new turn to timeline (live, during conversation) ──
+  function addLiveTurn(turn) {
+    timelineEmpty.style.display = 'none';
+    allHistoryTurns.push(turn);
+    var el = renderTurnPair(turn, allHistoryTurns.length - 1, allHistoryTurns.length, true);
+    timelineTurns.appendChild(el);
+
+    // Update toggle count
+    if (allHistoryTurns.length > COLLAPSED_TURN_COUNT) {
+      toggleBtn.style.display = 'inline-block';
+      toggleBtn.textContent = historyExpanded
+        ? 'Show recent only'
+        : 'Show all (' + allHistoryTurns.length + ' turns)';
+    }
+
+    // Scroll to show the new turn (but above the fixed dock)
+    setTimeout(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+
+  // ── Update last turn with the response ──
+  function updateLastTurnResponse(responseText) {
+    if (allHistoryTurns.length === 0) return;
+    allHistoryTurns[allHistoryTurns.length - 1].response = responseText;
+
+    // Re-render just the last pair
+    var lastPair = timelineTurns.lastElementChild;
+    if (lastPair) {
+      var debHtml = '<div class="turn-deb">' +
+        '<div class="turn-avatar deb">D</div>' +
+        '<div class="turn-bubble">' +
+          '<div class="turn-name">' + STORYTELLER_NAME + '</div>' +
+          '<div class="turn-text">' + escapeHtml(responseText) + '</div>' +
+        '</div>' +
+      '</div>';
+
+      // Check if deb section already exists
+      var existing = lastPair.querySelector('.turn-deb');
+      if (existing) {
+        existing.outerHTML = debHtml;
+      } else {
+        lastPair.insertAdjacentHTML('beforeend', debHtml);
+      }
+    }
+  }
+
+  // ── Show/hide typing ──
+  function showTyping() {
+    typingArea.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+  }
+  function hideTyping() {
+    typingArea.innerHTML = '';
+  }
+
+  // ── Fetch history from API ──
+  function loadHistory() {
+    fetch(API_BASE + '/storyteller/' + STORYTELLER_ID + '/history')
+      .then(function(res) {
+        if (!res.ok) throw new Error('History endpoint returned ' + res.status);
+        return res.json();
+      })
+      .then(function(data) {
+        timelineLoading.style.display = 'none';
+        renderTimeline(data.sessions || []);
+
+        // If there's history, don't auto-prompt. Let Deb start when ready.
+        // If no history, auto-start the conversation with a warm first question.
+        if (allHistoryTurns.length === 0) {
+          fetchNextQuestion(null);
+        }
+      })
+      .catch(function(err) {
+        console.warn('History load failed (OK for first visit):', err);
+        timelineLoading.style.display = 'none';
+        timelineEmpty.style.display = 'block';
+        // Still usable without history — start fresh
+        fetchNextQuestion(null);
+      });
+  }
+
+  // ── Fetch next question from chat API ──
+  function fetchNextQuestion(lastResponse) {
+    setInputEnabled(false);
+    showTyping();
+
+    var body = {
+      session_id: sessionId,
+      question_count: questionCount,
+      category: 'childhood',
+      last_response: lastResponse,
+      all_qa_pairs: allQaPairs,
+      storyteller_id: STORYTELLER_ID
+    };
+
+    fetch(API_BASE + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Chat API error: ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      hideTyping();
+      questionCount = data.question_count || (questionCount + 1);
+      currentQuestion = data.next_question_text;
+
+      // Add George's question to the timeline
+      addLiveTurn({
+        question: data.next_question_text,
+        response: null,
+        ts: new Date().toISOString()
+      });
+
+      // Speak the question
+      speakText(data.next_question_text);
+
+      setInputEnabled(true);
+      chatInput.focus();
+    })
+    .catch(function(err) {
+      hideTyping();
+      console.error('Chat API error:', err);
+      showError('Something went wrong. Please try again.');
+      setInputEnabled(true);
+    });
+  }
+
+  // ── Send user message ──
+  window.sendMessage = function() {
+    if (sending) return;
+    var text = chatInput.value.trim();
+    if (!text) return;
+
+    sending = true;
+    chatInput.value = '';
+    chatInput.style.height = 'auto';
+
+    // If there's no pending question yet (first message on a page with history),
+    // we need to start the conversation
+    if (!currentQuestion && allHistoryTurns.length > 0) {
+      // User is initiating a new conversation turn
+      // The last turn in history should have a response, so this is a fresh message
+      // We'll send it as the last_response to get a follow-up
+      allQaPairs.push({ question: '(continued)', response: text });
+      questionCount++;
+
+      // Show Deb's message in the timeline
+      addLiveTurn({
+        question: '(You said:)',
+        response: text,
+        ts: new Date().toISOString()
+      });
+
+      fetchNextQuestion(text);
+      sending = false;
+      return;
+    }
+
+    // Normal flow: responding to George's question
+    // Update the current turn's response
+    updateLastTurnResponse(text);
+
+    // Record Q&A pair
+    allQaPairs.push({ question: currentQuestion, response: text });
+    currentQuestion = '';
+
+    // Fetch next question (no cap on personalized pages)
+    fetchNextQuestion(text);
+    sending = false;
+  };
+
+  // ── Helpers ──
+  function setInputEnabled(enabled) {
+    chatInput.disabled = !enabled;
+    sendBtn.disabled = !enabled;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ── CSS animation for new items ──
+  var style = document.createElement('style');
+  style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }';
+  document.head.appendChild(style);
+
+  // ── Init ──
+  loadHistory();
+
+})();
+</script>
+
+</body>
+</html>
