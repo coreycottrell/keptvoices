@@ -1016,9 +1016,683 @@ footer .footer-copy {
 }
 
 /* ============================================================
+   HERO PLAY-BUTTON OVERLAY
+   ============================================================ */
+.hero-image-wrap {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 720px;
+  cursor: pointer;
+}
+.hero-image-wrap .hero-image {
+  display: block;
+  margin-top: 0;
+}
+.hero-play-overlay {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px; height: 80px;
+  background: rgba(42, 36, 32, 0.55);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.hero-play-overlay svg {
+  width: 32px; height: 32px;
+  fill: var(--warm-white);
+  margin-left: 4px; /* optical center for triangle */
+}
+.hero-play-overlay.hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+}
+.hero-image-wrap:hover .hero-play-overlay:not(.hidden) {
+  background: rgba(42, 36, 32, 0.7);
+  transform: translate(-50%, -50%) scale(1.05);
+}
+.hero-image-wrap:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: var(--radius);
+}
+
+/* ============================================================
+   QR FEATURE SECTION
+   ============================================================ */
+.qr-feature {
+  background: var(--soft-black);
+  color: var(--warm-white);
+}
+.qr-feature .container {
+  max-width: 960px;
+}
+.qr-feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: center;
+}
+.qr-feature .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  color: var(--gold);
+}
+.qr-feature .kicker::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+.qr-feature .kicker span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.qr-feature h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--warm-white);
+  margin-bottom: 1.5rem;
+}
+.qr-feature h2 em {
+  font-style: italic;
+  color: var(--gold);
+}
+.qr-feature .qr-desc {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #d0c4ac;
+  max-width: 520px;
+  margin-bottom: 2rem;
+}
+.qr-feature-list {
+  list-style: none;
+  display: grid;
+  gap: 1.25rem;
+}
+.qr-feature-list li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.qr-feature-list .note-icon {
+  width: 28px; height: 28px;
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.qr-feature-list .item-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--warm-white);
+}
+.qr-feature-list .item-desc {
+  font-size: 0.88rem;
+  color: #a89a80;
+  margin-top: 0.15rem;
+}
+
+/* Page mockup */
+.qr-page-mockup {
+  background: var(--cream);
+  color: var(--text-primary);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 5vw, 5rem);
+  position: relative;
+  box-shadow: 30px 50px 100px -20px rgba(0, 0, 0, 0.55);
+  transform: rotate(-1.4deg);
+  transition: transform 0.6s ease;
+  font-family: var(--serif);
+  min-height: 420px;
+}
+.qr-page-mockup:hover {
+  transform: rotate(-0.6deg);
+}
+.qr-page-mockup .page-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.qr-page-mockup .page-kicker {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.qr-page-mockup .page-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-style: italic;
+  font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+  margin-top: 0.4rem;
+  color: var(--charcoal);
+}
+.qr-page-mockup .page-ornament {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.3em;
+  font-size: 0.7rem;
+}
+.qr-page-mockup .page-body {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--text-primary);
+}
+.qr-page-mockup .page-body .drop-cap::first-letter {
+  font-size: 2.8rem;
+  float: left;
+  line-height: 1;
+  padding-right: 0.4rem;
+  color: var(--deep-gold);
+  font-weight: 700;
+}
+.qr-page-mockup .page-body p + p {
+  text-indent: 1.5em;
+  margin-top: 0.5rem;
+}
+.qr-code-placeholder {
+  position: absolute;
+  right: clamp(1rem, 2vw, 1.5rem);
+  bottom: clamp(2.5rem, 4vw, 3.5rem);
+  width: 56px; height: 56px;
+  border: 1px solid var(--border-medium);
+  background: var(--warm-white);
+  padding: 4px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 1px;
+}
+.qr-code-placeholder span {
+  background: var(--charcoal);
+  opacity: 0.7;
+}
+.qr-code-placeholder span:nth-child(even) {
+  background: transparent;
+}
+.qr-code-placeholder span:nth-child(3n+1) {
+  background: var(--charcoal);
+  opacity: 0.85;
+}
+.qr-code-label {
+  position: absolute;
+  right: clamp(1rem, 2vw, 1.5rem);
+  bottom: clamp(1.5rem, 3vw, 2.2rem);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  width: 56px;
+}
+.qr-page-number {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: clamp(0.5rem, 1.5vw, 1rem);
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   DIGITAL EDITION SECTION
+   ============================================================ */
+.digital-edition {
+  background: var(--warm-white);
+}
+.digital-edition .container {
+  max-width: 960px;
+}
+.de-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: clamp(2rem, 4vw, 3.75rem);
+  align-items: flex-start;
+  margin-top: 2.5rem;
+}
+.de-left .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: var(--deep-gold);
+}
+.de-left .kicker::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--deep-gold);
+  opacity: 0.6;
+}
+.de-left .kicker span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.de-left h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+}
+.de-left h2 em {
+  font-style: italic;
+}
+.de-left .lede {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin-bottom: 1.75rem;
+}
+.de-bullets {
+  list-style: none;
+  display: grid;
+  gap: 0.9rem;
+}
+.de-bullets li {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.de-bullets li .bullet {
+  color: var(--deep-gold);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+/* Browser chrome mockup */
+.browser-mockup {
+  background: var(--cream);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 70px -30px rgba(42, 36, 32, 0.35);
+  overflow: hidden;
+  min-height: 480px;
+}
+.browser-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  background: #ebe3d6;
+}
+.browser-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.browser-dot.red { background: #c45842; }
+.browser-dot.yellow { background: #c9a84c; }
+.browser-dot.green { background: #6b8e6b; }
+.browser-url {
+  flex: 1;
+  margin-left: 0.8rem;
+  padding: 0.3rem 0.75rem;
+  background: var(--warm-white);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.browser-demo-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Password gate inside browser */
+.password-gate {
+  padding: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 3vw, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.password-gate .lock-icon {
+  margin-bottom: 1.25rem;
+}
+.password-gate .lock-icon svg {
+  width: 44px; height: 44px;
+}
+.password-gate .gate-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--deep-gold);
+  margin-bottom: 0.5rem;
+}
+.password-gate h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.25rem;
+}
+.password-gate h3 em {
+  font-style: italic;
+}
+.password-gate .gate-family {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.password-gate .gate-instruction {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  max-width: 360px;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+.password-gate .gate-input-wrap {
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 1.25rem;
+}
+.password-gate .gate-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--deep-gold);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  text-align: center;
+  color: var(--text-primary);
+  outline: none;
+}
+.password-gate .gate-input::placeholder {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+.password-gate .gate-btn {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  padding: 0.85rem;
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: default;
+  margin-bottom: 0.75rem;
+}
+.password-gate .gate-demo-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================================
+   GIFT UPSELL SECTION
+   ============================================================ */
+.gift-upsell {
+  background: var(--cream);
+}
+.gift-upsell .container {
+  max-width: 960px;
+}
+.gift-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: center;
+}
+.gift-visual {
+  position: relative;
+  height: 380px;
+}
+.gift-book {
+  position: absolute;
+  width: 200px;
+  height: 260px;
+  border-radius: 4px;
+  box-shadow: 0 12px 40px rgba(42, 36, 32, 0.2);
+  background: linear-gradient(135deg, var(--warm-white) 0%, #ece5d8 100%);
+  border: 1px solid var(--border-medium);
+  overflow: hidden;
+}
+.gift-book::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, transparent 70%, rgba(201, 168, 76, 0.15) 100%);
+  pointer-events: none;
+}
+.gift-book-inner {
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+.gift-book-inner .book-title {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.25rem;
+}
+.gift-book-inner .book-subtitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.gift-book-spine {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 12px;
+  background: var(--deep-gold);
+  opacity: 0.4;
+}
+.gift-book:nth-child(1) {
+  top: 10%; left: 5%;
+  transform: rotate(-4deg);
+  z-index: 1;
+}
+.gift-book:nth-child(2) {
+  top: 5%; left: 18%;
+  transform: rotate(1deg);
+  z-index: 2;
+}
+.gift-book:nth-child(3) {
+  top: 12%; left: 32%;
+  transform: rotate(5deg);
+  z-index: 3;
+}
+.gift-right .kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  color: var(--deep-gold);
+}
+.gift-right .kicker::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--deep-gold);
+  opacity: 0.6;
+}
+.gift-right .kicker span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.gift-right h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+}
+.gift-right h2 em {
+  font-style: italic;
+}
+.gift-right .gift-desc {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin-bottom: 2rem;
+}
+
+/* Counter widget */
+.gift-counter-widget {
+  padding: 1.75rem;
+  background: var(--warm-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+}
+.gift-counter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+.gift-counter-header .label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.gift-counter-header .count {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+.gift-counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+.gift-step-btn {
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border-medium);
+  border-radius: 6px;
+  background: var(--warm-white);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+.gift-step-btn:hover {
+  border-color: var(--gold);
+  color: var(--deep-gold);
+}
+.gift-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--border-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.gift-progress-fill {
+  height: 100%;
+  background: var(--deep-gold);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.gift-receipt {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.gift-receipt-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dotted var(--border-light);
+  padding-bottom: 0.4rem;
+}
+.gift-receipt-row .receipt-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.gift-receipt-row .receipt-value {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+.gift-receipt-row.total .receipt-value {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--charcoal);
+}
+.gift-receipt-row.total .receipt-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.gift-slipcase-note {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
+  .qr-feature-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .de-grid { grid-template-columns: 1fr; }
+  .gift-grid { grid-template-columns: 1fr; }
+  .gift-visual { height: 260px; }
+  .gift-book { width: 150px; height: 200px; }
+  .gift-book:nth-child(1) { left: 10%; }
+  .gift-book:nth-child(2) { left: 28%; }
+  .gift-book:nth-child(3) { left: 46%; }
   .nav-links { display: none; }
   section { padding: 3.5rem 1.25rem; }
   .chat-messages { height: 360px; }
@@ -1030,6 +1704,14 @@ footer .footer-copy {
   .steps-grid { grid-template-columns: 1fr; }
   .md-banner { padding: 2rem 1rem 1.75rem; }
   .by-sunday-card { padding: 1.75rem 1.25rem; }
+  .hero-play-overlay { width: 60px; height: 60px; }
+  .hero-play-overlay svg { width: 24px; height: 24px; }
+  .qr-page-mockup { padding: 1.5rem; padding-bottom: 3rem; min-height: 320px; }
+  .qr-code-placeholder { width: 40px; height: 40px; }
+  .browser-mockup { min-height: 380px; }
+  .password-gate { padding: 2rem 1.25rem; }
+  .gift-counter-widget { padding: 1.25rem; }
+  .gift-receipt { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -1077,7 +1759,15 @@ footer .footer-copy {
       <span>&middot;</span>
       <span><strong>Mom's voice never leaves our servers</strong></span>
     </div>
-    <img class="hero-image" src="img/hero.jpg" alt="Grandmother and grandchild sharing a moment at the kitchen table in warm golden light" loading="eager" width="2752" height="1536">
+    <div class="hero-image-wrap" role="button" tabindex="0" aria-label="Play sample audio" id="hero-play-btn">
+      <img class="hero-image" src="img/hero.jpg" alt="Grandmother and grandchild sharing a moment at the kitchen table in warm golden light" loading="eager" width="2752" height="1536">
+      <div class="hero-play-overlay" id="hero-play-overlay">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="6,3 20,12 6,21"/></svg>
+      </div>
+    </div>
+    <audio id="hero-audio" preload="none">
+      <source src="https://keptvoices-api.ai-civ.com/static/samples/sample-chapter-porch-and-hands.mp3" type="audio/mpeg">
+    </audio>
   </div>
 </section>
 
@@ -1177,6 +1867,181 @@ footer .footer-copy {
       </div>
     </div>
     </div><!-- end flex wrapper -->
+  </div>
+</section>
+
+<!-- ═══════ QR FEATURE ═══════ -->
+<section class="qr-feature" id="qr-feature">
+  <div class="container">
+    <div class="qr-feature-grid">
+      <div>
+        <div class="kicker"><span>New for the hardcover</span></div>
+        <h2>Scan the page.<br><em>Hear her tell it.</em></h2>
+        <p class="qr-desc">Every chapter in the hardcover carries a small foil-stamped QR at the corner. Hold a phone near it and the room fills with her voice&nbsp;&mdash;&nbsp;exactly as she told it during her recording sessions.</p>
+        <ul class="qr-feature-list">
+          <li>
+            <div class="note-icon">&#9834;</div>
+            <div>
+              <div class="item-title">Page-keyed audio</div>
+              <div class="item-desc">Each QR plays the recording for the page you're reading.</div>
+            </div>
+          </li>
+          <li>
+            <div class="note-icon">&#9834;</div>
+            <div>
+              <div class="item-title">Foil-stamped, not printed</div>
+              <div class="item-desc">Pressed into the paper in antique gold&nbsp;&mdash;&nbsp;a mark, not a sticker.</div>
+            </div>
+          </li>
+          <li>
+            <div class="note-icon">&#9834;</div>
+            <div>
+              <div class="item-title">No app, no account</div>
+              <div class="item-desc">Opens in any phone's camera. Hosted by us, kept forever.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <div class="qr-page-mockup">
+          <div class="page-header">
+            <div class="page-kicker">Chapter Seven</div>
+            <div class="page-title">The Porch and the Hands</div>
+            <div class="page-ornament">&mdash; &diams; &mdash;</div>
+          </div>
+          <div class="page-body">
+            <p class="drop-cap">There was a screened porch on the side of my grandmother's house in Knoxville that I can still feel under my bare feet. The boards were soft pine, worn smooth by fifty summers of grandchildren.</p>
+            <p>Mamaw sat in the same green metal chair every evening, shelling butter beans into a paper sack.</p>
+          </div>
+          <div class="qr-code-placeholder">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="qr-code-label">&#9834; Listen &middot; 2:14</div>
+          <div class="qr-page-number">&mdash; 87 &mdash;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ DIGITAL EDITION ═══════ -->
+<section class="digital-edition" id="digital-edition">
+  <div class="container">
+    <div class="de-grid">
+      <div class="de-left">
+        <div class="kicker"><span>Digital edition &middot; New</span></div>
+        <h2>A private link, for the <em>whole family</em>.</h2>
+        <p class="lede">Every full memoir now includes a paginated digital edition at a private URL&nbsp;&mdash;&nbsp;protected by a family password you choose. Share one link with cousins across the country; they read at their own pace, on any device.</p>
+        <ul class="de-bullets">
+          <li><span class="bullet">&bull;</span><span>Chapter-by-chapter pagination&nbsp;&mdash;&nbsp;like turning a real page</span></li>
+          <li><span class="bullet">&bull;</span><span>In-text audio: every paragraph is tappable to hear</span></li>
+          <li><span class="bullet">&bull;</span><span>Choose your own password; revoke or rotate any time</span></li>
+          <li><span class="bullet">&bull;</span><span>Reads on phone, tablet, e-reader; prints to PDF</span></li>
+          <li><span class="bullet">&bull;</span><span>Up to 6 family collaborators can leave notes in the margins</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="browser-mockup">
+          <div class="browser-chrome">
+            <span class="browser-dot red"></span>
+            <span class="browser-dot yellow"></span>
+            <span class="browser-dot green"></span>
+            <div class="browser-url">&#128274; keptvoices.com/v/margaret-1953</div>
+            <span class="browser-demo-label">Demo</span>
+          </div>
+          <div class="password-gate">
+            <div class="lock-icon">
+              <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="20" width="24" height="18" stroke="currentColor" stroke-width="1.2" fill="none" style="color:var(--deep-gold)"/>
+                <path d="M14 20 V14 a8 8 0 0 1 16 0 V20" stroke="currentColor" stroke-width="1.2" fill="none" style="color:var(--deep-gold)"/>
+                <circle cx="22" cy="29" r="1.6" fill="currentColor" style="color:var(--deep-gold)"/>
+              </svg>
+            </div>
+            <div class="gate-label">Margaret's Memoir</div>
+            <h3><em>The Fairchild</em> Family</h3>
+            <div class="gate-family"></div>
+            <p class="gate-instruction">For family only. Enter the word she chose for you.</p>
+            <div class="gate-input-wrap">
+              <input type="text" class="gate-input" placeholder="family password" disabled aria-label="Family password (demo)">
+            </div>
+            <button class="gate-btn" aria-disabled="true">Open the volume</button>
+            <small class="gate-demo-note">(demo &middot; /v/&lt;name&gt; coming June 2026)</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ GIFT UPSELL ═══════ -->
+<section class="gift-upsell" id="gift-upsell">
+  <div class="container">
+    <div class="gift-grid">
+      <div class="gift-visual">
+        <div class="gift-book">
+          <div class="gift-book-spine"></div>
+          <div class="gift-book-inner">
+            <div class="book-title">Kept Voices</div>
+            <div class="book-subtitle">Margaret's Memoir</div>
+          </div>
+        </div>
+        <div class="gift-book">
+          <div class="gift-book-spine"></div>
+          <div class="gift-book-inner">
+            <div class="book-title">Kept Voices</div>
+            <div class="book-subtitle">Margaret's Memoir</div>
+          </div>
+        </div>
+        <div class="gift-book">
+          <div class="gift-book-spine"></div>
+          <div class="gift-book-inner">
+            <div class="book-title">Kept Voices</div>
+            <div class="book-subtitle">Margaret's Memoir</div>
+          </div>
+        </div>
+      </div>
+      <div class="gift-right">
+        <div class="kicker"><span>For the grandkids &middot; New</span></div>
+        <h2>One for every <em>nightstand</em> in the family.</h2>
+        <p class="gift-desc">Add hardcover copies for the grandchildren&nbsp;&mdash;&nbsp;same linen, same foil, same QR audio. Each ships with a personalized inscription page she signs once and we letterpress.</p>
+        <div class="gift-counter-widget">
+          <div class="gift-counter-header">
+            <span class="label">Hardcover copies</span>
+            <span class="count" id="gift-count-label">1 copy</span>
+          </div>
+          <div class="gift-counter-controls">
+            <button class="gift-step-btn" id="gift-minus" aria-label="Remove one copy">&minus;</button>
+            <div class="gift-progress-bar">
+              <div class="gift-progress-fill" id="gift-progress" style="width: 16.7%"></div>
+            </div>
+            <button class="gift-step-btn" id="gift-plus" aria-label="Add one copy">+</button>
+          </div>
+          <div class="gift-receipt">
+            <div class="gift-receipt-row">
+              <span class="receipt-label">Their Voice (full memoir)</span>
+              <span class="receipt-value">$129</span>
+            </div>
+            <div class="gift-receipt-row">
+              <span class="receipt-label" id="gift-extras-label">Extras &times; 0</span>
+              <span class="receipt-value" id="gift-extras-price">$0</span>
+            </div>
+            <div class="gift-receipt-row">
+              <span class="receipt-label">Foil inscription page</span>
+              <span class="receipt-value">included</span>
+            </div>
+            <div class="gift-receipt-row total">
+              <span class="receipt-label">Estimated total</span>
+              <span class="receipt-value" id="gift-total-price">$129</span>
+            </div>
+          </div>
+        </div>
+        <p class="gift-slipcase-note">Order three or more and we throw in a slipcase. Quietly.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1946,6 +2811,74 @@ footer .footer-copy {
       answer.style.maxHeight = answer.scrollHeight + 'px';
     }
   };
+
+  // ── Hero play-button overlay ──
+  (function() {
+    var heroPlayBtn = document.getElementById('hero-play-btn');
+    var heroAudio = document.getElementById('hero-audio');
+    var heroOverlay = document.getElementById('hero-play-overlay');
+    if (!heroPlayBtn || !heroAudio || !heroOverlay) return;
+
+    function toggleHeroAudio() {
+      if (heroAudio.paused) {
+        heroAudio.play().then(function() {
+          heroOverlay.classList.add('hidden');
+        }).catch(function() {
+          // autoplay blocked; ignore
+        });
+      } else {
+        heroAudio.pause();
+        heroOverlay.classList.remove('hidden');
+      }
+    }
+
+    heroPlayBtn.addEventListener('click', toggleHeroAudio);
+    heroPlayBtn.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleHeroAudio();
+      }
+    });
+
+    heroAudio.addEventListener('ended', function() {
+      heroOverlay.classList.remove('hidden');
+    });
+  })();
+
+  // ── Gift upsell counter ──
+  (function() {
+    var copies = 1;
+    var min = 1;
+    var max = 6;
+    var pricePerExtra = 99;
+    var basePrice = 129;
+
+    var minusBtn = document.getElementById('gift-minus');
+    var plusBtn = document.getElementById('gift-plus');
+    var countLabel = document.getElementById('gift-count-label');
+    var progress = document.getElementById('gift-progress');
+    var extrasLabel = document.getElementById('gift-extras-label');
+    var extrasPrice = document.getElementById('gift-extras-price');
+    var totalPrice = document.getElementById('gift-total-price');
+
+    if (!minusBtn || !plusBtn) return;
+
+    function update() {
+      var extras = Math.max(0, copies - 1);
+      countLabel.textContent = copies + (copies === 1 ? ' copy' : ' copies');
+      progress.style.width = ((copies / max) * 100) + '%';
+      extrasLabel.textContent = 'Extras \u00d7 ' + extras;
+      extrasPrice.textContent = '$' + (extras * pricePerExtra);
+      totalPrice.textContent = '$' + (basePrice + extras * pricePerExtra);
+    }
+
+    minusBtn.addEventListener('click', function() {
+      if (copies > min) { copies--; update(); }
+    });
+    plusBtn.addEventListener('click', function() {
+      if (copies < max) { copies++; update(); }
+    });
+  })();
 
 })();
 </script>
