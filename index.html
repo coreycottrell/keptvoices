@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kept Voices — Tell us a story. We'll help you write it.</title>
+<meta name="description" content="Mom answers a few questions on her phone. Our AI shapes her answers into a real chapter. Free first chapter, no app, no account. The full hardcover book is $129.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ai-civ.com/keptvoices/">
+<meta property="og:title" content="Kept Voices — Tell us a story. We'll help you write it.">
+<meta property="og:description" content="Mom answers a few questions. AI shapes them into a real chapter. Free. No app. No account.">
+<meta property="og:site_name" content="Kept Voices">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET + TOKENS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --warm-white: #faf8f5;
+  --cream: #f5f0e8;
+  --light-gold: #f0e6d0;
+  --gold: #c9a84c;
+  --deep-gold: #a07830;
+  --warm-brown: #5c4a32;
+  --rich-brown: #3d2e1e;
+  --charcoal: #2a2420;
+  --soft-black: #1a1614;
+  --text-primary: #2a2420;
+  --text-secondary: #6b5d50;
+  --text-muted: #9a8b7a;
+  --accent-warm: #c47f3a;
+  --accent-sage: #7a9a7e;
+  --border-light: rgba(201, 168, 76, 0.15);
+  --border-medium: rgba(201, 168, 76, 0.25);
+  --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--warm-white);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: var(--accent-warm); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250, 248, 245, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0.75rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-weight: 700; font-size: 1.25rem;
+  color: var(--charcoal);
+  text-decoration: none;
+}
+.nav-logo:hover { text-decoration: none; }
+.nav-links { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+.nav-links a {
+  color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent-warm); text-decoration: none; }
+.nav-cta {
+  background: var(--charcoal); color: var(--warm-white) !important;
+  padding: 0.5rem 1.25rem; border-radius: 6px;
+  font-size: 0.82rem; font-weight: 600;
+  transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--rich-brown); transform: translateY(-1px); text-decoration: none !important; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-block;
+  background: var(--charcoal);
+  color: var(--warm-white);
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 1.05rem; font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s;
+  border: none; cursor: pointer;
+  font-family: var(--sans);
+}
+.btn-primary:hover {
+  background: var(--rich-brown);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(42,36,32,0.15);
+  text-decoration: none;
+}
+.btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 1rem; font-weight: 500;
+  text-decoration: none;
+  border: 1.5px solid var(--border-medium);
+  transition: all 0.25s;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--deep-gold); text-decoration: none; }
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+section { padding: 5rem 1.5rem; }
+.container { max-width: 960px; margin: 0 auto; }
+.section-label {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--deep-gold);
+  background: rgba(201, 168, 76, 0.1);
+  padding: 0.3rem 0.8rem; border-radius: 100px;
+  margin-bottom: 1rem;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700; line-height: 1.2;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+}
+.section-sub {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 640px;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  padding: 7rem 1.5rem 4rem;
+  background: linear-gradient(180deg, var(--cream) 0%, var(--warm-white) 60%);
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -30%; left: -20%; width: 140%; height: 140%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(201, 168, 76, 0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 80%, rgba(196, 127, 58, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-content { position: relative; max-width: 720px; }
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--charcoal);
+  margin-bottom: 1.5rem;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text-secondary);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+}
+.hero-cta-group {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.trust-strip {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; justify-content: center;
+  font-size: 0.82rem; color: var(--text-muted);
+}
+.trust-strip span { white-space: nowrap; }
+.trust-strip strong { color: var(--text-secondary); font-weight: 600; }
+
+/* ============================================================
+   HOW IT WORKS
+   ============================================================ */
+.how-it-works { background: var(--warm-white); }
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+.step-card {
+  background: var(--cream);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.step-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(42,36,32,0.06);
+}
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+  background: var(--charcoal); color: var(--warm-white);
+  font-weight: 700; font-size: 0.9rem;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+.step-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem; font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--charcoal);
+}
+.step-card p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   COMPARISON
+   ============================================================ */
+.comparison { background: var(--cream); }
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.comp-card {
+  background: var(--warm-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+.comp-card.highlight {
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.1);
+}
+.comp-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem; font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--charcoal);
+}
+.comp-card ul { list-style: none; }
+.comp-card li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: 0.35rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.comp-card li::before {
+  position: absolute; left: 0;
+}
+.comp-card.highlight li::before { content: '\2713'; color: var(--accent-sage); font-weight: 700; }
+.comp-other li::before { content: '\2717'; color: #c47060; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .comparison-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   SAMPLE CHAPTER
+   ============================================================ */
+.sample-chapter { background: var(--warm-white); }
+.sample-chapter-card {
+  background: var(--cream);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  margin-top: 2rem;
+  max-width: 700px;
+}
+.sample-chapter-card .chapter-title {
+  font-family: var(--serif);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.25rem;
+}
+.sample-chapter-card .chapter-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+.sample-chapter-card .chapter-body {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--text-primary);
+}
+.sample-chapter-card .chapter-body .drop-cap::first-letter {
+  font-size: 3.2rem;
+  float: left;
+  line-height: 1;
+  padding-right: 0.5rem;
+  color: var(--deep-gold);
+  font-weight: 700;
+}
+.sample-audio {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+.sample-audio label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.sample-audio audio {
+  width: 100%;
+  height: 40px;
+  border-radius: 6px;
+}
+
+/* ============================================================
+   CHAT CONTAINER
+   ============================================================ */
+.chat-section { background: var(--cream); display: none; }
+.chat-section.active { display: block; }
+.chat-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--warm-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(42,36,32,0.08);
+}
+.chat-header {
+  background: var(--charcoal);
+  color: var(--warm-white);
+  padding: 1rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.chat-header h3 {
+  font-family: var(--serif);
+  font-size: 1.05rem; font-weight: 600;
+}
+.chat-header .chat-progress {
+  font-size: 0.8rem; color: rgba(255,255,255,0.6);
+}
+.chat-messages {
+  height: 420px;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+}
+.chat-msg {
+  max-width: 85%;
+  padding: 0.85rem 1.1rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  animation: msgIn 0.3s ease-out;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-msg.incoming {
+  align-self: flex-start;
+  background: var(--cream);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+.chat-msg.outgoing {
+  align-self: flex-end;
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border-bottom-right-radius: 4px;
+}
+.chat-msg.system {
+  align-self: center;
+  background: rgba(201, 168, 76, 0.1);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  max-width: 90%;
+  text-align: center;
+  border-radius: 8px;
+}
+.chat-audio-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.chat-audio-row audio {
+  height: 32px; flex: 1;
+}
+.chat-audio-row .audio-label {
+  font-size: 0.72rem; color: var(--text-muted); white-space: nowrap;
+}
+.typing-indicator {
+  display: flex; gap: 4px; padding: 0.85rem 1.1rem; align-self: flex-start;
+  background: var(--cream); border-radius: 16px; border-bottom-left-radius: 4px;
+}
+.typing-indicator span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-muted);
+  animation: blink 1.4s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}
+.chat-input-row {
+  display: flex;
+  border-top: 1px solid var(--border-light);
+  background: var(--warm-white);
+}
+.chat-input-row textarea {
+  flex: 1;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  font-family: var(--sans);
+  resize: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  min-height: 52px;
+  max-height: 120px;
+}
+.chat-input-row textarea::placeholder { color: var(--text-muted); }
+.chat-send-btn {
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border: none;
+  padding: 0 1.25rem;
+  font-size: 0.9rem; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: var(--sans);
+}
+.chat-send-btn:hover { background: var(--rich-brown); }
+.chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Chapter preview (shown after finalize) */
+.chapter-preview-container {
+  padding: 2rem 1.5rem;
+  display: none;
+}
+.chapter-preview-container.active { display: block; }
+.chapter-preview-container .preview-title {
+  font-family: var(--serif);
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+.chapter-preview-container .preview-body {
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+.chapter-preview-container .preview-body p {
+  margin-bottom: 1rem;
+}
+
+/* Spinner */
+.spinner-container {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--deep-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner-text {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ============================================================
+   EMAIL CAPTURE / UPGRADE GATE
+   ============================================================ */
+.upgrade-gate {
+  background: var(--warm-white);
+  display: none;
+}
+.upgrade-gate.active { display: block; }
+.upgrade-card {
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--cream);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.08);
+}
+.upgrade-card h2 {
+  font-family: var(--serif);
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.75rem;
+}
+.upgrade-card .upgrade-price {
+  font-size: 2.5rem; font-weight: 700;
+  color: var(--deep-gold);
+  margin-bottom: 0.25rem;
+}
+.upgrade-card .upgrade-note {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.upgrade-card .upgrade-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+.upgrade-card .upgrade-features li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: 0.3rem 0 0.3rem 1.5rem;
+  position: relative;
+}
+.upgrade-card .upgrade-features li::before {
+  content: '\2713';
+  position: absolute; left: 0;
+  color: var(--accent-sage); font-weight: 700;
+}
+.email-form {
+  display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;
+}
+.email-form input[type="email"] {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--border-medium);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: var(--sans);
+  background: var(--warm-white);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.email-form input[type="email"]:focus { border-color: var(--gold); }
+.email-form input[type="email"]::placeholder { color: var(--text-muted); }
+.email-form button {
+  padding: 0.85rem 1.5rem;
+  background: var(--charcoal);
+  color: var(--warm-white);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+.email-form button:hover { background: var(--rich-brown); }
+.signup-success {
+  display: none;
+  padding: 1.5rem;
+  text-align: center;
+}
+.signup-success.active { display: block; }
+.signup-success h3 {
+  font-family: var(--serif);
+  font-size: 1.2rem; font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 0.5rem;
+}
+.signup-success p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   PRICING
+   ============================================================ */
+.pricing { background: var(--cream); }
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  max-width: 700px;
+}
+.price-card {
+  background: var(--warm-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+.price-card.featured {
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.1);
+  position: relative;
+}
+.price-card.featured::after {
+  content: 'Most popular';
+  position: absolute; top: -10px; right: 16px;
+  background: var(--deep-gold); color: var(--warm-white);
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem; border-radius: 4px;
+}
+.price-card h3 {
+  font-family: var(--serif);
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 0.25rem;
+}
+.price-amount {
+  font-size: 2.2rem; font-weight: 700;
+  color: var(--deep-gold);
+  margin-bottom: 1rem;
+}
+.price-card ul {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+.price-card li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.25rem 0 0.25rem 1.3rem;
+  position: relative;
+}
+.price-card li::before {
+  content: '\2713'; position: absolute; left: 0;
+  color: var(--accent-sage); font-weight: 600; font-size: 0.85rem;
+}
+.price-card .btn-primary { width: 100%; text-align: center; padding: 0.75rem; font-size: 0.9rem; }
+.price-card .btn-secondary { width: 100%; text-align: center; padding: 0.75rem; font-size: 0.9rem; }
+.pricing-trust {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+@media (max-width: 540px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq { background: var(--warm-white); }
+.faq-list { margin-top: 2rem; max-width: 700px; }
+.faq-item {
+  border-bottom: 1px solid var(--border-light);
+}
+.faq-question {
+  width: 100%;
+  background: none; border: none;
+  text-align: left;
+  padding: 1.25rem 2rem 1.25rem 0;
+  font-size: 1rem; font-weight: 600;
+  font-family: var(--sans);
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+.faq-question:hover { color: var(--accent-warm); }
+.faq-question::after {
+  content: '+';
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  font-size: 1.3rem; font-weight: 400; color: var(--text-muted);
+  transition: transform 0.2s;
+}
+.faq-item.open .faq-question::after {
+  content: '\2212';
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq-answer-inner {
+  padding: 0 0 1.25rem;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ============================================================
+   FINAL CTA
+   ============================================================ */
+.final-cta {
+  background: linear-gradient(180deg, var(--warm-white) 0%, var(--cream) 100%);
+  text-align: center;
+  padding: 5rem 1.5rem;
+}
+.final-cta h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+}
+.final-cta p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto 2rem;
+  line-height: 1.8;
+}
+.final-cta .trust-line {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: var(--charcoal);
+  color: rgba(255,255,255,0.6);
+  padding: 3rem 1.5rem 2rem;
+  text-align: center;
+}
+footer .footer-brand {
+  font-family: var(--serif);
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--warm-white);
+  margin-bottom: 0.5rem;
+}
+footer .footer-tagline {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 1.5rem;
+}
+footer .footer-links {
+  display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+  margin-bottom: 1.5rem;
+}
+footer .footer-links a {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  transition: color 0.2s;
+}
+footer .footer-links a:hover { color: var(--warm-white); text-decoration: none; }
+footer .footer-copy {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  section { padding: 3.5rem 1.25rem; }
+  .chat-messages { height: 360px; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 6rem 1rem 3rem; }
+  .hero h1 { font-size: 2rem; }
+  .chat-messages { height: 320px; }
+  .steps-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ NAV ═══════ -->
+<nav>
+  <a class="nav-logo" href="/keptvoices/">Kept Voices</a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#sample">Sample Chapter</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a class="nav-cta" href="#" onclick="openChat(); return false;">Start Free</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Tell us a story.<br>We'll help you write it&nbsp;&mdash;&nbsp;for&nbsp;free.</h1>
+    <p class="hero-sub">
+      Most "memory book" apps charge $99 before your parent records a word.
+      Kept Voices is different: Mom answers a few questions on her phone,
+      our AI helps her shape it into a real chapter, and you read it.
+      If you love it, the full hardcover book is $129. If not, you've lost nothing.
+    </p>
+    <div class="hero-cta-group">
+      <a href="#" class="btn-primary" onclick="openChat(); return false;">Start Mom's first chapter &mdash; free</a>
+      <a href="#how-it-works" class="btn-secondary">See how it works &rarr;</a>
+    </div>
+    <div class="trust-strip">
+      <span>Free to start</span>
+      <span>&middot;</span>
+      <span>No credit card required</span>
+      <span>&middot;</span>
+      <span>No app to download</span>
+      <span>&middot;</span>
+      <span><strong>Mom's voice never leaves our servers</strong></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <span class="section-label">How It Works</span>
+    <h2 class="section-title">Three steps to a chapter you'll keep.</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Send Mom a link</h3>
+        <p>She doesn't need an app. Or a password. Or your help. She taps a link on any phone or computer, anywhere, and starts typing&nbsp;&mdash;&nbsp;or talking. That's it.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>A friendly conversation, not a survey</h3>
+        <p>Our AI asks questions in a warm narrator's voice, then asks the <em>next</em> question&nbsp;&mdash;&nbsp;the one a family historian would ask. "You mentioned the diner&nbsp;&mdash;&nbsp;what did your mother order there?" Real conversation. Real depth.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>A polished chapter you can keep or share</h3>
+        <p>Our AI shapes her answers into a real chapter&nbsp;&mdash;&nbsp;the kind you'd find in a memoir, not a transcript. Share it with the family. If everyone loves it, the full book brings 26 more chapters and a printed hardcover to your door.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ COMPARISON ═══════ -->
+<section class="comparison" id="comparison">
+  <div class="container">
+    <span class="section-label">Why Kept Voices</span>
+    <h2 class="section-title">Built for the way families actually share stories.</h2>
+    <p class="section-sub">The follow-up question is the whole point. Other products treat your parent like they're filling out a survey. We treat them like they have a story worth listening to.</p>
+    <div class="comparison-grid">
+      <div class="comp-card comp-other">
+        <h3>Other memory books</h3>
+        <ul>
+          <li>$99 paywall before anyone records a word</li>
+          <li>Static prompts&nbsp;&mdash;&nbsp;same questions for everyone</li>
+          <li>Voice or text, never both</li>
+          <li>Your loved one's voice sent to third parties</li>
+          <li>If your parent never engages, you're out $99</li>
+        </ul>
+      </div>
+      <div class="comp-card highlight">
+        <h3>Kept Voices</h3>
+        <ul>
+          <li>Free first chapter&nbsp;&mdash;&nbsp;pay only if you love it</li>
+          <li>AI follow-ups unique to every answer</li>
+          <li>Typing or talking&nbsp;&mdash;&nbsp;their choice, switch anytime</li>
+          <li>Self-hosted&nbsp;&mdash;&nbsp;voice never leaves our servers</li>
+          <li>If your parent never engages, you're out nothing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SAMPLE CHAPTER ═══════ -->
+<section class="sample-chapter" id="sample">
+  <div class="container">
+    <span class="section-label">Sample</span>
+    <h2 class="section-title">Here's what one conversation becomes.</h2>
+    <p class="section-sub">A real chapter from a real Kept Voices session. She typed her answers on her iPhone over a quiet afternoon. Our AI asked the follow-ups. Read what we made of her words.</p>
+    <div class="sample-chapter-card">
+      <div class="chapter-title">The Porch and the Hands</div>
+      <div class="chapter-meta">Margaret, 73 &mdash; on her grandmother's porch and her father's workshop</div>
+      <div class="chapter-body">
+        <p class="drop-cap">There was a screened porch on the side of my grandmother's house in Knoxville that I can still feel under my bare feet. The boards were soft pine, worn smooth by fifty summers of grandchildren, and in the late afternoon they held the warmth of the day the way a cast-iron skillet holds heat long after the stove is off.</p>
+        <p>Mamaw sat in the same green metal chair every evening. She'd shell butter beans into a paper sack and talk about absolutely nothing that mattered&nbsp;&mdash;&nbsp;the price of tomatoes, whether the Hendersons' dog had gotten loose again&nbsp;&mdash;&nbsp;and somehow those were the conversations I remember more clearly than anything else.</p>
+        <p>My father's hands were different. They were a mechanic's hands, always nicked, always stained with something that soap couldn't quite reach. But he built things after work&nbsp;&mdash;&nbsp;birdhouses, mostly, then furniture. He never drew plans. He just started, and the thing became what it was going to be.</p>
+      </div>
+      <div class="sample-audio">
+        <label>Listen to this chapter (AI narration, warm narrator voice)</label>
+        <audio controls preload="none">
+          <source src="https://keptvoices-api.ai-civ.com/static/samples/sample-chapter-porch-and-hands.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CHAT SECTION (hidden until CTA) ═══════ -->
+<section class="chat-section" id="chat-section">
+  <div class="container">
+    <span class="section-label">Your Chapter</span>
+    <h2 class="section-title" style="margin-bottom: 2rem;">Let's write your first chapter.</h2>
+    <div class="chat-wrapper" id="chat-wrapper">
+      <div class="chat-header">
+        <h3>Kept Voices</h3>
+        <span class="chat-progress" id="chat-progress">Question 1 of 7</span>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <!-- Messages render here -->
+      </div>
+      <div class="chat-input-row" id="chat-input-row">
+        <textarea id="chat-input" placeholder="Type your answer..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendResponse();}"></textarea>
+        <button class="chat-send-btn" id="chat-send-btn" onclick="sendResponse()">Send</button>
+      </div>
+    </div>
+
+    <!-- Chapter preview (replaces chat after finalize) -->
+    <div class="chapter-preview-container" id="chapter-preview-container">
+      <div style="max-width:640px; margin:0 auto; background:var(--warm-white); border:1px solid var(--border-light); border-radius:var(--radius); overflow:hidden; box-shadow:0 8px 40px rgba(42,36,32,0.08);">
+        <div style="background:var(--charcoal); color:var(--warm-white); padding:1rem 1.5rem;">
+          <h3 style="font-family:var(--serif); font-size:1.05rem; font-weight:600;">Your Chapter Preview</h3>
+        </div>
+        <div style="padding:2rem 1.5rem;">
+          <h2 class="preview-title" id="preview-title"></h2>
+          <div class="preview-body" id="preview-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ EMAIL CAPTURE / UPGRADE GATE ═══════ -->
+<section class="upgrade-gate" id="upgrade-gate">
+  <div class="container">
+    <div class="upgrade-card" id="upgrade-card">
+      <h2>Save this chapter forever.</h2>
+      <p style="color:var(--text-secondary); font-size:0.95rem; margin-bottom:1.5rem;">Your free chapter is ready. Enter your email to keep it&nbsp;&mdash;&nbsp;and when you're ready, the full hardcover book is just one step away.</p>
+      <div class="upgrade-price">$129</div>
+      <div class="upgrade-note">Full hardcover memoir &middot; 26 chapters &middot; Pay once</div>
+      <ul class="upgrade-features">
+        <li>26 polished chapters covering a whole life</li>
+        <li>6 months of weekly gentle prompts</li>
+        <li>Family collaboration (up to 6 members)</li>
+        <li>8" x 10" hardcover delivered to your door</li>
+        <li>Digital PDF + EPUB for everyone</li>
+        <li>30-day money-back guarantee</li>
+      </ul>
+      <div class="email-form" id="email-form">
+        <input type="email" id="signup-email" placeholder="Your email address" required>
+        <button onclick="submitSignup()">Save My Chapter</button>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.75rem;">No credit card now. We'll send the chapter to your inbox.</p>
+    </div>
+    <div class="signup-success" id="signup-success">
+      <h3>Chapter saved. Check your inbox.</h3>
+      <p>We'll keep this chapter safe for you. When you're ready for the full book, we'll be here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PRICING ═══════ -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <span class="section-label">Pricing</span>
+    <h2 class="section-title">Start free. Pay only when you know it's worth it.</h2>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Free First Chapter</h3>
+        <div class="price-amount">$0</div>
+        <ul>
+          <li>1 polished chapter</li>
+          <li>AI follow-up questions</li>
+          <li>Beautiful prose from your words</li>
+          <li>Shareable web preview</li>
+          <li>No account needed</li>
+        </ul>
+        <a href="#" class="btn-primary" onclick="openChat(); return false;">Start Free</a>
+      </div>
+      <div class="price-card featured">
+        <h3>The Full Book</h3>
+        <div class="price-amount">$129</div>
+        <ul>
+          <li>26 chapters over 6 months</li>
+          <li>Family collaboration (6 members)</li>
+          <li>Photos in every chapter</li>
+          <li>1 hardcover book (8"x10", 200pp)</li>
+          <li>Free US shipping</li>
+          <li>Digital PDF + EPUB</li>
+          <li>30-day money-back</li>
+        </ul>
+        <a href="#" class="btn-secondary" onclick="openChat(); return false;">Try Free First</a>
+      </div>
+    </div>
+    <p class="pricing-trust">30-day money-back. No subscriptions. Pay once.</p>
+  </div>
+</section>
+
+<!-- ═══════ FAQ ═══════ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <span class="section-label">FAQ</span>
+    <h2 class="section-title">Questions families ask.</h2>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Does Mom need to download an app?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">No. She gets a text or email with a link, taps it, and starts. Works on any phone or computer. No app, no account, no password.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Can Mom type her answers, or does she have to record audio?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Either. Some people love typing; others prefer talking. Kept Voices works both ways and switches between them as she goes. The free first chapter can be entirely text&nbsp;&mdash;&nbsp;no microphone required.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">How is this different from Remento or Storyworth?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Remento gives Mom a list of static questions and prints whatever she says. Storyworth sends one written question per week. Kept Voices reads what she writes and asks follow-up questions in real time&nbsp;&mdash;&nbsp;the way a journalist or family historian would. "You mentioned the diner&nbsp;&mdash;&nbsp;what did your mother order there?" The result is a real chapter, not a transcript. Plus, you try it free first.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Is the first chapter really free?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes. Mom writes one chapter. You see the polished version. You share it with the family. No credit card, no commitment. If you want the full hardcover book ($129), you pay then.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Can multiple family members contribute to one book?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes. Once you upgrade to the full book, family members can suggest prompts, add photos, edit chapters, and read along in real time. Up to 6 collaborators per book.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">What about privacy?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Your stories are yours. We never train AI on them, never share them, never use them for marketing. The voice that asks the questions is a professional AI narrator. But your loved one's voice, when they speak, is processed and stored only on our servers. <strong>It is never sent to ElevenLabs. It is never sent to OpenAI. It is never sent to any third party.</strong> You can download or delete everything anytime.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">What if Mom never writes anything?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">The free first chapter exists for exactly this reason. If she doesn't engage, you don't pay. We refund 100% within 30 days of any paid order&nbsp;&mdash;&nbsp;no questions.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Can I edit what the AI wrote?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes. Every chapter is editable until you commit it to print. You can revise wording, add photos, restore filler words for authenticity. Family members can collaborate.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">How long does the hardcover take to arrive?</button>
+        <div class="faq-answer"><div class="faq-answer-inner">Standard US delivery: 14 business days from order. International: 14-21 days.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FINAL CTA ═══════ -->
+<section class="final-cta">
+  <h2>One chapter. No charge.<br>Just see what happens.</h2>
+  <p>Send Mom a link. She writes one story this week. You read what we make of it. From there, the rest is up to you.</p>
+  <a href="#" class="btn-primary" onclick="openChat(); return false;">Start Mom's first chapter &mdash; free</a>
+  <div class="trust-line">No credit card required. No subscription. Just one conversation.</div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-brand">Kept Voices</div>
+  <div class="footer-tagline">"Tell us a story. We'll help you write it."</div>
+  <div class="footer-links">
+    <a href="#how-it-works">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#sample">Sample</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:corey@ai-civ.com">Contact</a>
+  </div>
+  <div class="footer-copy">&copy; 2026 Kept Voices &middot; Built by AiCIV</div>
+</footer>
+
+<!-- ═══════ JAVASCRIPT ═══════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── State ──
+  const API_BASE = 'https://keptvoices-api.ai-civ.com/api/keptvoices';
+  let sessionId = 'kv-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+  let questionCount = 0;
+  let allQaPairs = [];
+  let currentQuestion = '';
+  let chatActive = false;
+  let sending = false;
+  let chapterTitle = '';
+
+  // ── DOM refs ──
+  const chatSection    = document.getElementById('chat-section');
+  const chatMessages   = document.getElementById('chat-messages');
+  const chatInput      = document.getElementById('chat-input');
+  const chatSendBtn    = document.getElementById('chat-send-btn');
+  const chatInputRow   = document.getElementById('chat-input-row');
+  const chatProgress   = document.getElementById('chat-progress');
+  const previewContainer = document.getElementById('chapter-preview-container');
+  const previewTitle   = document.getElementById('preview-title');
+  const previewBody    = document.getElementById('preview-body');
+  const upgradeGate    = document.getElementById('upgrade-gate');
+
+  // ── Open chat ──
+  window.openChat = function() {
+    chatSection.classList.add('active');
+    chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!chatActive) {
+      chatActive = true;
+      fetchNextQuestion(null);
+    }
+  };
+
+  // ── Add message bubble ──
+  function addMessage(text, type) {
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + type;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return div;
+  }
+
+  // ── Add audio player beneath a message ──
+  function addAudioPlayer(audioUrl) {
+    if (!audioUrl) return;
+    const row = document.createElement('div');
+    row.className = 'chat-audio-row';
+    row.innerHTML = '<span class="audio-label">Listen</span><audio controls preload="none"><source src="' +
+      escapeHtml(audioUrl) + '" type="audio/mpeg"></audio>';
+    chatMessages.appendChild(row);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Auto-play the question audio
+    const audio = row.querySelector('audio');
+    if (audio) {
+      audio.play().catch(function() { /* autoplay blocked is fine */ });
+    }
+  }
+
+  // ── Typing indicator ──
+  function showTyping() {
+    const el = document.createElement('div');
+    el.className = 'typing-indicator';
+    el.id = 'typing-dots';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(el);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  function hideTyping() {
+    const el = document.getElementById('typing-dots');
+    if (el) el.remove();
+  }
+
+  // ── Fetch next question from API ──
+  function fetchNextQuestion(lastResponse) {
+    setInputEnabled(false);
+    showTyping();
+
+    const body = {
+      session_id: sessionId,
+      question_count: questionCount,
+      category: 'childhood',
+      last_response: lastResponse,
+      all_qa_pairs: allQaPairs
+    };
+
+    fetch(API_BASE + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('API error: ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      hideTyping();
+      questionCount = data.question_count || (questionCount + 1);
+      currentQuestion = data.next_question_text;
+
+      // Update progress
+      chatProgress.textContent = 'Question ' + questionCount + ' of 7';
+
+      // Show question
+      addMessage(data.next_question_text, 'incoming');
+
+      // Audio: use pre-recorded q1-q7.mp3 for first 7, fallback to API audio_url
+      var audioUrl = null;
+      if (questionCount <= 7) {
+        audioUrl = '/keptvoices/audio/q' + questionCount + '.mp3';
+      } else if (data.audio_url) {
+        audioUrl = data.audio_url;
+      }
+      addAudioPlayer(audioUrl);
+
+      setInputEnabled(true);
+      chatInput.focus();
+
+      // If final, handle after user's next response
+      if (data.is_final) {
+        // Mark that next send should trigger finalize
+        chatSection.dataset.isFinal = 'true';
+      }
+    })
+    .catch(function(err) {
+      hideTyping();
+      console.error('Chat API error:', err);
+      addMessage('Something went wrong. Please try again in a moment.', 'system');
+      setInputEnabled(true);
+    });
+  }
+
+  // ── Send user response ──
+  window.sendResponse = function() {
+    if (sending) return;
+    var text = chatInput.value.trim();
+    if (!text) return;
+
+    sending = true;
+    chatInput.value = '';
+    autoResizeTextarea();
+
+    // Show user message
+    addMessage(text, 'outgoing');
+
+    // Record Q&A pair
+    allQaPairs.push({ question: currentQuestion, response: text });
+
+    // Check if we should finalize
+    if (chatSection.dataset.isFinal === 'true') {
+      finalizeChapter();
+    } else {
+      fetchNextQuestion(text);
+    }
+    sending = false;
+  };
+
+  // ── Finalize: generate chapter preview ──
+  function finalizeChapter() {
+    setInputEnabled(false);
+    chatInputRow.style.display = 'none';
+    chatProgress.textContent = 'Writing your chapter...';
+
+    // Show spinner
+    var spinnerDiv = document.createElement('div');
+    spinnerDiv.className = 'spinner-container';
+    spinnerDiv.id = 'finalize-spinner';
+    spinnerDiv.innerHTML = '<div class="spinner"></div><div class="spinner-text">Writing your chapter...</div>';
+    chatMessages.appendChild(spinnerDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    fetch(API_BASE + '/finalize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: sessionId,
+        all_qa_pairs: allQaPairs
+      })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('Finalize error: ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      var spinner = document.getElementById('finalize-spinner');
+      if (spinner) spinner.remove();
+
+      var chapter = data.chapter_preview || {};
+      chapterTitle = chapter.title || 'Your Chapter';
+      var markdown = chapter.markdown || 'Your chapter is being prepared...';
+
+      chatProgress.textContent = 'Chapter complete';
+
+      // Show chapter in preview area
+      previewTitle.textContent = chapterTitle;
+      previewBody.innerHTML = markdownToHtml(markdown);
+      previewContainer.classList.add('active');
+
+      // Show upgrade gate
+      upgradeGate.classList.add('active');
+
+      // Scroll to preview
+      setTimeout(function() {
+        previewContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    })
+    .catch(function(err) {
+      var spinner = document.getElementById('finalize-spinner');
+      if (spinner) spinner.remove();
+      console.error('Finalize error:', err);
+      addMessage('We had trouble writing your chapter. Please try refreshing the page.', 'system');
+      chatProgress.textContent = 'Error generating chapter';
+    });
+  }
+
+  // ── Email signup ──
+  window.submitSignup = function() {
+    var emailInput = document.getElementById('signup-email');
+    var email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      emailInput.style.borderColor = '#c47060';
+      return;
+    }
+
+    var btn = document.querySelector('#email-form button');
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+
+    fetch(API_BASE + '/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: sessionId,
+        email: email,
+        interest: 'free_chapter',
+        chapter_title: chapterTitle
+      })
+    })
+    .then(function(res) {
+      return res.json();
+    })
+    .then(function(data) {
+      document.getElementById('email-form').style.display = 'none';
+      document.getElementById('upgrade-card').querySelector('h2').textContent = 'Chapter saved!';
+      document.getElementById('signup-success').classList.add('active');
+    })
+    .catch(function(err) {
+      console.error('Signup error:', err);
+      btn.textContent = 'Save My Chapter';
+      btn.disabled = false;
+      addMessage('Signup had an issue. Please try again.', 'system');
+    });
+  };
+
+  // ── Helpers ──
+  function setInputEnabled(enabled) {
+    chatInput.disabled = !enabled;
+    chatSendBtn.disabled = !enabled;
+  }
+
+  function autoResizeTextarea() {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+  }
+  chatInput.addEventListener('input', autoResizeTextarea);
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Simple markdown to HTML (paragraphs + bold + italic)
+  function markdownToHtml(md) {
+    return md
+      .split(/\n\n+/)
+      .map(function(p) {
+        p = p.trim();
+        if (!p) return '';
+        p = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        p = p.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        p = p.replace(/\n/g, '<br>');
+        return '<p>' + p + '</p>';
+      })
+      .join('');
+  }
+
+  // FAQ toggle
+  window.toggleFaq = function(btn) {
+    var item = btn.parentElement;
+    var answer = item.querySelector('.faq-answer');
+    var isOpen = item.classList.contains('open');
+
+    // Close all others
+    document.querySelectorAll('.faq-item.open').forEach(function(el) {
+      el.classList.remove('open');
+      el.querySelector('.faq-answer').style.maxHeight = '0';
+    });
+
+    if (!isOpen) {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  };
+
+})();
+</script>
+
+</body>
+</html>
