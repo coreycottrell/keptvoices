@@ -1830,6 +1830,14 @@ footer .footer-copy {
   }
 
   // ── Email signup ──
+  function getSourceParam() {
+    try {
+      var v = new URLSearchParams(window.location.search).get('source');
+      if (!v) return null;
+      v = v.trim().toLowerCase().slice(0, 64);
+      return /^[a-z0-9_-]+$/.test(v) ? v : null;
+    } catch (e) { return null; }
+  }
   window.submitSignup = function() {
     var emailInput = document.getElementById('signup-email');
     var email = emailInput.value.trim();
@@ -1842,15 +1850,19 @@ footer .footer-copy {
     btn.textContent = 'Saving...';
     btn.disabled = true;
 
+    var payload = {
+      session_id: sessionId,
+      email: email,
+      interest: 'free_chapter',
+      chapter_title: chapterTitle
+    };
+    var source = getSourceParam();
+    if (source) payload.source = source;
+
     fetch(API_BASE + '/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        session_id: sessionId,
-        email: email,
-        interest: 'free_chapter',
-        chapter_title: chapterTitle
-      })
+      body: JSON.stringify(payload)
     })
     .then(function(res) {
       return res.json();
