@@ -480,6 +480,20 @@ nav {
 <!-- TYPING INDICATOR (shown when waiting for George) -->
 <div id="typing-area" style="max-width:640px; margin:0 auto; padding:0 1rem;"></div>
 
+<!-- FINISH CHAPTER (placed in scroll-flow above the fixed dock) -->
+<div class="finish-chapter-wrap" id="finish-chapter-wrap" style="display:none;">
+  <button class="finish-chapter-btn" id="finish-chapter-btn">Finish chapter — generate my audiobook</button>
+  <div class="finish-chapter-hint" id="finish-chapter-hint">Stitches your recorded answers into one MP3.</div>
+</div>
+
+<!-- AUDIOBOOK READY -->
+<div class="audiobook-ready" id="audiobook-ready" style="display:none;">
+  <h3>Your audiobook is ready</h3>
+  <div id="audiobook-meta" style="font-size:0.85rem; color:var(--text-secondary);"></div>
+  <audio id="audiobook-audio" controls preload="none"></audio>
+  <a id="audiobook-link" href="#" target="_blank" rel="noopener"></a>
+</div>
+
 <div class="bottom-spacer"></div>
 
 <!-- ERROR TOAST -->
@@ -509,20 +523,6 @@ nav {
     Your voice is yours. Saved only for your chapter — never used to train any AI model.
   </div>
   <div class="voice-capture-error hidden" id="voice-capture-error"></div>
-</div>
-
-<!-- FINISH CHAPTER -->
-<div class="finish-chapter-wrap" id="finish-chapter-wrap" style="display:none;">
-  <button class="finish-chapter-btn" id="finish-chapter-btn">Finish chapter — generate my audiobook</button>
-  <div class="finish-chapter-hint" id="finish-chapter-hint">Stitches your recorded answers into one MP3.</div>
-</div>
-
-<!-- AUDIOBOOK READY -->
-<div class="audiobook-ready" id="audiobook-ready" style="display:none;">
-  <h3>Your audiobook is ready</h3>
-  <div id="audiobook-meta" style="font-size:0.85rem; color:var(--text-secondary);"></div>
-  <audio id="audiobook-audio" controls preload="none"></audio>
-  <a id="audiobook-link" href="#" target="_blank" rel="noopener"></a>
 </div>
 
 <script>
