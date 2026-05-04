@@ -945,6 +945,76 @@ footer .footer-copy {
 }
 
 /* ============================================================
+   MOTHERS DAY BANNER (2026-05-04 → 2026-05-11)
+   ============================================================ */
+.md-banner {
+  margin-top: 3.25rem; /* clear fixed nav */
+  padding: 2.5rem 1.5rem 2rem;
+  background: linear-gradient(135deg, var(--cream) 0%, var(--light-gold) 100%);
+  border-bottom: 1px solid var(--border-medium);
+  text-align: center;
+}
+.md-banner-inner { max-width: 760px; margin: 0 auto; }
+.md-banner-label {
+  display: inline-block;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--deep-gold);
+  padding: 0.3rem 0.85rem; border-radius: 100px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border-medium);
+  margin-bottom: 1.1rem;
+}
+.md-banner-h {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.6vw, 2.3rem);
+  font-weight: 700; line-height: 1.2;
+  color: var(--charcoal);
+  margin-bottom: 0.85rem;
+}
+.md-banner-body {
+  font-size: 1.02rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 1.5rem;
+}
+.md-banner .btn-primary { padding: 0.85rem 2.1rem; font-size: 1rem; }
+
+/* "What you'll have by Sunday" micro-section */
+.by-sunday {
+  background: var(--warm-white);
+  padding: 4rem 1.5rem 3.5rem;
+  border-top: 1px solid var(--border-light);
+}
+.by-sunday-card {
+  max-width: 680px; margin: 0 auto;
+  background: var(--cream);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius);
+  padding: 2.25rem 2rem;
+  text-align: center;
+}
+.by-sunday-card h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 1rem;
+}
+.by-sunday-card p {
+  color: var(--text-primary);
+  line-height: 1.75;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+.by-sunday-card p.reassure {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {
@@ -953,10 +1023,12 @@ footer .footer-copy {
   .chat-messages { height: 360px; }
 }
 @media (max-width: 480px) {
-  .hero { padding: 6rem 1rem 3rem; }
+  .hero { padding: 4rem 1rem 3rem; }
   .hero h1 { font-size: 2rem; }
   .chat-messages { height: 320px; }
   .steps-grid { grid-template-columns: 1fr; }
+  .md-banner { padding: 2rem 1rem 1.75rem; }
+  .by-sunday-card { padding: 1.75rem 1.25rem; }
 }
 </style>
 </head>
@@ -974,19 +1046,26 @@ footer .footer-copy {
   </ul>
 </nav>
 
+<!-- ═══════ MOTHER'S DAY BANNER (2026-05-04 → 2026-05-11) ═══════ -->
+<section class="md-banner" aria-label="Mother's Day campaign">
+  <div class="md-banner-inner">
+    <span class="md-banner-label">Mother's Day &middot; May 10</span>
+    <h2 class="md-banner-h">Give Mom her first chapter.</h2>
+    <p class="md-banner-body">Free this Mother's Day. Two minutes to set up, five for Mom to answer&nbsp;&mdash;&nbsp;chapter delivered to your inbox before Sunday.</p>
+    <a href="#" class="btn-primary" onclick="openChat(); return false;">Start her chapter &mdash; free</a>
+  </div>
+</section>
+
 <!-- ═══════ HERO ═══════ -->
 <section class="hero">
   <div class="hero-content">
     <h1>Tell us a story.<br>We'll help you write it&nbsp;&mdash;&nbsp;for&nbsp;free.</h1>
     <p class="hero-sub">
-      Most "memory book" apps charge $99 before your parent records a word.
-      Kept Voices is different: Mom answers a few questions on her phone,
-      our AI helps her shape it into a real chapter, and you read it.
-      If you love it, the full hardcover book is $129. If not, you've lost nothing.
+      A 5-minute conversation with Mom becomes a real chapter from her life&nbsp;&mdash;&nbsp;written, polished, and read back in a warm narrator's voice. Free this Mother's Day.
     </p>
     <div class="hero-cta-group">
-      <a href="#" class="btn-primary" onclick="openChat(); return false;">Start Mom's first chapter &mdash; free</a>
-      <a href="#how-it-works" class="btn-secondary">See how it works &rarr;</a>
+      <a href="#" class="btn-primary" onclick="openChat(); return false;">Start her chapter &mdash; free</a>
+      <a href="#sample" class="btn-secondary">Hear what we made for one mother &rarr;</a>
     </div>
     <div class="trust-strip">
       <span>Free to start</span>
@@ -998,6 +1077,16 @@ footer .footer-copy {
       <span><strong>Mom's voice never leaves our servers</strong></span>
     </div>
     <img class="hero-image" src="img/hero.jpg" alt="Grandmother and grandchild sharing a moment at the kitchen table in warm golden light" loading="eager" width="2752" height="1536">
+  </div>
+</section>
+
+<!-- ═══════ WHAT YOU'LL HAVE BY SUNDAY ═══════ -->
+<section class="by-sunday" aria-label="What you'll have by Sunday">
+  <div class="by-sunday-card">
+    <h2>What you'll have by Sunday</h2>
+    <p>A real chapter from Mom's life&nbsp;&mdash;&nbsp;about 800 to 1,200 words&nbsp;&mdash;&nbsp;written from her own conversation, in her own emphasis. Delivered to your inbox with audio and a shareable link.</p>
+    <p class="reassure">No card. No charge. If she doesn't open the link, nothing happens.</p>
+    <a href="#" class="btn-primary" onclick="openChat(); return false;">Start her chapter &mdash; free</a>
   </div>
 </section>
 
@@ -1173,7 +1262,7 @@ footer .footer-copy {
         <input type="email" id="signup-email" placeholder="Your email address" required>
         <button onclick="submitSignup()">Save My Chapter</button>
       </div>
-      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.75rem;">No credit card now. We'll send the chapter to your inbox.</p>
+      <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.75rem;">No credit card now. We'll send the chapter to your inbox. We'll text or email Mom a friendly link&nbsp;&mdash;&nbsp;no app, no password, no account.</p>
     </div>
     <div class="signup-success" id="signup-success">
       <h3>Chapter saved. Check your inbox.</h3>
@@ -1279,7 +1368,7 @@ footer .footer-copy {
 <section class="final-cta">
   <h2>One chapter. No charge.<br>Just see what happens.</h2>
   <p>Send Mom a link. She writes one story this week. You read what we make of it. From there, the rest is up to you.</p>
-  <a href="#" class="btn-primary" onclick="openChat(); return false;">Start Mom's first chapter &mdash; free</a>
+  <a href="#" class="btn-primary" onclick="openChat(); return false;">Start her chapter &mdash; free</a>
   <div class="trust-line">No credit card required. No subscription. Just one conversation.</div>
 </section>
 
