@@ -735,7 +735,7 @@ section { padding: 5rem 1.5rem; }
   padding: 0.85rem 1rem;
   border: 1.5px solid var(--border-medium);
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 1rem; /* >=16px prevents iOS auto-zoom on tap */
   font-family: var(--sans);
   background: var(--warm-white);
   color: var(--text-primary);
@@ -807,9 +807,14 @@ section { padding: 5rem 1.5rem; }
   font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--deep-gold);
   margin-bottom: 0.6rem;
-  line-height: 1.4;
+  line-height: 1.55;
 }
-.price-availability .dot { color: var(--gold); margin: 0 0.35em; }
+.price-availability .ship {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--gold);
+  font-weight: 700;
+}
 .price-card h3 {
   font-family: var(--serif);
   font-size: 1.1rem; font-weight: 600;
@@ -1620,7 +1625,8 @@ footer .footer-copy {
   margin-bottom: 1.25rem;
 }
 .gift-step-btn {
-  width: 36px; height: 36px;
+  min-width: 44px; min-height: 44px;
+  width: 44px; height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1633,6 +1639,8 @@ footer .footer-copy {
   cursor: pointer;
   transition: all 0.2s;
   font-family: var(--sans);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .gift-step-btn:hover {
   border-color: var(--gold);
@@ -2178,7 +2186,7 @@ footer .footer-copy {
         <a href="#" class="btn-secondary" onclick="openChat(); return false;">Start with Free Chapter</a>
       </div>
       <div class="price-card featured">
-        <span class="price-availability">Available now <span class="dot">&middot;</span> Hardcover ships June 2026</span>
+        <span class="price-availability">Available now<span class="ship">Hardcover ships June 2026</span></span>
         <h3>Their Voice</h3>
         <div class="price-amount">$129</div>
         <ul>
