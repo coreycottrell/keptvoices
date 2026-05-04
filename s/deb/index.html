@@ -501,33 +501,26 @@ nav {
     micBtn.classList.add('unsupported');
   }
 
-  // ── Browser TTS ──
-  var ttsVoice = null;
-  function loadTtsVoice() {
-    var voices = speechSynthesis.getVoices();
-    if (voices.length === 0) return;
-    ttsVoice = voices.find(function(v) {
-      return v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male');
-    }) || voices.find(function(v) {
-      return v.lang.startsWith('en') && v.name.toLowerCase().includes('male');
-    }) || voices.find(function(v) {
-      return v.lang.startsWith('en');
-    }) || null;
-  }
-  if (typeof speechSynthesis !== 'undefined') {
-    loadTtsVoice();
-    speechSynthesis.onvoiceschanged = loadTtsVoice;
-  }
+  // ── Kokoro TTS (server-side, bm_george voice — all questions) ──
+  var TTS_URL = API_BASE + '/tts';
+  var ttsCache = {}; // text -> blob URL, kept alive for session replay
 
-  function speakText(text) {
-    if (typeof speechSynthesis === 'undefined') return;
-    if (!voiceToggle.checked) return;
-    speechSynthesis.cancel();
-    var utterance = new SpeechSynthesisUtterance(text);
-    if (ttsVoice) utterance.voice = ttsVoice;
-    utterance.rate = 0.95;
-    utterance.pitch = 0.95;
-    speechSynthesis.speak(utterance);
+  function fetchKokoroAudio(text) {
+    if (ttsCache[text]) return Promise.resolve(ttsCache[text]);
+    return fetch(TTS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, voice: 'bm_george' })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('TTS error: ' + res.status);
+      return res.arrayBuffer();
+    })
+    .then(function(buf) {
+      var url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
+      ttsCache[text] = url;
+      return url;
+    });
   }
 
   // ── Error display ──
@@ -561,14 +554,18 @@ nav {
 
     var ts = formatTs(turn.ts);
 
-    // George's question
+    // George's question (with replay audio button)
+    var escapedQ = escapeHtml(turn.question);
+    var audioBtn = '<button class="turn-audio-btn" onclick="playTurnAudio(this)" data-text="' +
+      escapedQ.replace(/"/g, '&quot;') + '" title="Listen">&#9654;</button>';
     var georgeHtml = '<div class="turn-george">' +
       '<div class="turn-avatar george">G</div>' +
       '<div class="turn-bubble">' +
         '<div class="turn-name">George</div>' +
-        '<div class="turn-text">' + escapeHtml(turn.question) + '</div>' +
+        '<div class="turn-text">' + escapedQ + '</div>' +
         (ts ? '<div class="turn-ts">' + ts + '</div>' : '') +
       '</div>' +
+      audioBtn +
     '</div>';
 
     // Deb's response (if exists)
@@ -783,8 +780,30 @@ nav {
         ts: new Date().toISOString()
       });
 
-      // Speak the question
-      speakText(data.next_question_text);
+      // Kokoro TTS — render George's question as real audio
+      if (voiceToggle.checked) {
+        // Show thinking dots while audio renders
+        var thinkingEl = document.createElement('div');
+        thinkingEl.className = 'typing-indicator';
+        thinkingEl.id = 'tts-thinking';
+        thinkingEl.innerHTML = '<span></span><span></span><span></span>';
+        typingArea.appendChild(thinkingEl);
+
+        fetchKokoroAudio(data.next_question_text)
+          .then(function(audioUrl) {
+            var thinking = document.getElementById('tts-thinking');
+            if (thinking) thinking.remove();
+            // Create and auto-play audio element
+            var audioEl = document.createElement('audio');
+            audioEl.src = audioUrl;
+            audioEl.play().catch(function() { /* autoplay blocked is fine */ });
+          })
+          .catch(function(err) {
+            console.warn('Kokoro TTS failed, continuing without audio:', err);
+            var thinking = document.getElementById('tts-thinking');
+            if (thinking) thinking.remove();
+          });
+      }
 
       setInputEnabled(true);
       chatInput.focus();
@@ -858,6 +877,40 @@ nav {
   var style = document.createElement('style');
   style.textContent = '@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }';
   document.head.appendChild(style);
+
+  // ── Play audio for a turn (replay button) ──
+  var currentAudioEl = null;
+  window.playTurnAudio = function(btn) {
+    var text = btn.getAttribute('data-text');
+    if (!text) return;
+
+    // Stop any currently playing audio
+    if (currentAudioEl) {
+      currentAudioEl.pause();
+      currentAudioEl = null;
+      // Remove playing class from all buttons
+      document.querySelectorAll('.turn-audio-btn.playing').forEach(function(b) {
+        b.classList.remove('playing');
+      });
+    }
+
+    btn.classList.add('playing');
+    fetchKokoroAudio(text)
+      .then(function(audioUrl) {
+        var audio = new Audio(audioUrl);
+        currentAudioEl = audio;
+        audio.onended = function() {
+          btn.classList.remove('playing');
+          currentAudioEl = null;
+        };
+        audio.play().catch(function() {
+          btn.classList.remove('playing');
+        });
+      })
+      .catch(function() {
+        btn.classList.remove('playing');
+      });
+  };
 
   // ── Init ──
   loadHistory();

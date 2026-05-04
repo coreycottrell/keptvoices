@@ -1241,34 +1241,26 @@ footer .footer-copy {
     micBtn.classList.add('unsupported');
   }
 
-  // ── Browser TTS (for AI follow-up questions after q7) ──
-  var ttsVoice = null;
-  function loadTtsVoice() {
-    var voices = speechSynthesis.getVoices();
-    if (voices.length === 0) return;
-    // Prefer warm British male, fallback to any English male, fallback to any English
-    ttsVoice = voices.find(function(v) {
-      return v.lang.startsWith('en-GB') && v.name.toLowerCase().includes('male');
-    }) || voices.find(function(v) {
-      return v.lang.startsWith('en') && v.name.toLowerCase().includes('male');
-    }) || voices.find(function(v) {
-      return v.lang.startsWith('en');
-    }) || null;
-  }
-  if (typeof speechSynthesis !== 'undefined') {
-    loadTtsVoice();
-    speechSynthesis.onvoiceschanged = loadTtsVoice;
-  }
+  // ── Kokoro TTS (server-side, bm_george voice — all questions) ──
+  var TTS_URL = API_BASE + '/tts';
+  var ttsCache = {}; // text -> blob URL, kept alive for session replay
 
-  function speakText(text) {
-    if (typeof speechSynthesis === 'undefined') return;
-    if (!voiceToggle.checked) return;
-    speechSynthesis.cancel(); // stop any prior utterance
-    var utterance = new SpeechSynthesisUtterance(text);
-    if (ttsVoice) utterance.voice = ttsVoice;
-    utterance.rate = 0.95;
-    utterance.pitch = 0.95;
-    speechSynthesis.speak(utterance);
+  function fetchKokoroAudio(text) {
+    if (ttsCache[text]) return Promise.resolve(ttsCache[text]);
+    return fetch(TTS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, voice: 'bm_george' })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('TTS error: ' + res.status);
+      return res.arrayBuffer();
+    })
+    .then(function(buf) {
+      var url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
+      ttsCache[text] = url;
+      return url;
+    });
   }
 
   // ── Open chat ──
@@ -1351,22 +1343,30 @@ footer .footer-copy {
       // Update progress
       chatProgress.textContent = 'Question ' + questionCount + ' of 7';
 
-      // Show question
+      // Show question text immediately
       addMessage(data.next_question_text, 'incoming');
 
-      // Audio: use pre-recorded q1-q7.mp3 for first 7, fallback to API audio_url
-      var audioUrl = null;
-      if (questionCount <= 7) {
-        audioUrl = '/keptvoices/audio/q' + questionCount + '.mp3';
-      } else if (data.audio_url) {
-        audioUrl = data.audio_url;
-      }
+      // Kokoro TTS — render every question dynamically (unified voice path)
+      if (voiceToggle.checked) {
+        // Show "George is thinking..." while audio renders
+        var thinkingEl = document.createElement('div');
+        thinkingEl.className = 'typing-indicator';
+        thinkingEl.id = 'tts-thinking';
+        thinkingEl.innerHTML = '<span></span><span></span><span></span>';
+        chatMessages.appendChild(thinkingEl);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
 
-      if (audioUrl) {
-        addAudioPlayer(audioUrl);
-      } else if (questionCount > 7) {
-        // No pre-recorded or API audio — use browser TTS
-        speakText(data.next_question_text);
+        fetchKokoroAudio(data.next_question_text)
+          .then(function(audioUrl) {
+            var thinking = document.getElementById('tts-thinking');
+            if (thinking) thinking.remove();
+            addAudioPlayer(audioUrl);
+          })
+          .catch(function(err) {
+            console.warn('Kokoro TTS failed, continuing without audio:', err);
+            var thinking = document.getElementById('tts-thinking');
+            if (thinking) thinking.remove();
+          });
       }
 
       setInputEnabled(true);
