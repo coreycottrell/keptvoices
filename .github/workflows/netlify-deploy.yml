@@ -26,4 +26,8 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          npx --yes netlify-cli deploy --prod --dir=. --message="GHA deploy ${GITHUB_SHA::8}"
+          npx --yes netlify-cli deploy \
+            --prod \
+            --dir=. \
+            --site="$NETLIFY_SITE_ID" \
+            --message="GHA deploy ${GITHUB_SHA::8}"
