@@ -303,6 +303,86 @@ nav {
   cursor: pointer;
 }
 
+/* ── VOICE-CAPTURE PRIVACY NOTE ── */
+.voice-privacy-note {
+  max-width: 640px;
+  margin: 0.15rem auto 0;
+  padding: 0 0.1rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.45;
+}
+.voice-privacy-note.unsupported { display: none; }
+.voice-row.unsupported { display: none; }
+.voice-capture-error {
+  max-width: 640px;
+  margin: 0.25rem auto 0;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+  color: #8b3a3a;
+  background: rgba(196, 64, 64, 0.08);
+  border-left: 3px solid #c44040;
+  border-radius: 4px;
+}
+.voice-capture-error.hidden { display: none; }
+
+/* ── FINISH-CHAPTER + AUDIOBOOK READY ── */
+.finish-chapter-wrap {
+  max-width: 640px;
+  margin: 1.25rem auto 1rem;
+  text-align: center;
+}
+.finish-chapter-btn {
+  background: var(--deep-gold);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.5rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.2s, transform 0.1s;
+}
+.finish-chapter-btn:hover { background: var(--gold); }
+.finish-chapter-btn:active { transform: scale(0.98); }
+.finish-chapter-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.finish-chapter-hint {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.audiobook-ready {
+  max-width: 640px;
+  margin: 1.25rem auto 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--cream);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.audiobook-ready h3 {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--charcoal);
+  margin-bottom: 0.4rem;
+}
+.audiobook-ready audio {
+  width: 100%;
+  margin-top: 0.6rem;
+}
+.audiobook-ready a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
 /* ── TYPING INDICATOR ── */
 .typing-indicator {
   display: flex; gap: 4px;
@@ -421,6 +501,28 @@ nav {
     <input type="checkbox" id="voice-toggle" checked>
     <span>Read George's questions aloud</span>
   </label>
+  <label class="voice-row unsupported" id="voice-capture-row">
+    <input type="checkbox" id="voice-capture-toggle" checked>
+    <span>Save my voice for the audiobook</span>
+  </label>
+  <div class="voice-privacy-note unsupported" id="voice-privacy-note">
+    Your voice is yours. Saved only for your chapter — never used to train any AI model.
+  </div>
+  <div class="voice-capture-error hidden" id="voice-capture-error"></div>
+</div>
+
+<!-- FINISH CHAPTER -->
+<div class="finish-chapter-wrap" id="finish-chapter-wrap" style="display:none;">
+  <button class="finish-chapter-btn" id="finish-chapter-btn">Finish chapter — generate my audiobook</button>
+  <div class="finish-chapter-hint" id="finish-chapter-hint">Stitches your recorded answers into one MP3.</div>
+</div>
+
+<!-- AUDIOBOOK READY -->
+<div class="audiobook-ready" id="audiobook-ready" style="display:none;">
+  <h3>Your audiobook is ready</h3>
+  <div id="audiobook-meta" style="font-size:0.85rem; color:var(--text-secondary);"></div>
+  <audio id="audiobook-audio" controls preload="none"></audio>
+  <a id="audiobook-link" href="#" target="_blank" rel="noopener"></a>
 </div>
 
 <script>
@@ -431,6 +533,8 @@ nav {
   var STORYTELLER_ID = 'deb';
   var STORYTELLER_NAME = 'Deb';
   var API_BASE = 'https://keptvoices-api.ai-civ.com/api/keptvoices';
+  var API_HOST = 'https://keptvoices-api.ai-civ.com'; // root host for /v/ retrieval
+  var CHAPTER_ID = 'chapter1'; // future: derive from session category; backend currently ignores
   var COLLAPSED_TURN_COUNT = 3; // show last N turns by default
 
   // ── State ──
@@ -441,6 +545,17 @@ nav {
   var currentQuestion = '';
   var sending = false;
   var historyExpanded = false;
+
+  // ── Voice-capture state ──
+  var mediaRecorder = null;
+  var mediaStream = null;
+  var recordedChunks = [];          // blobs for current answer
+  var voiceCaptureMime = '';        // chosen mime, set in init
+  var voiceCaptureSupported = false; // browser feature OK
+  var voiceCaptureBackendLive = false; // probe success
+  var micPermissionState = 'unknown'; // unknown | granted | denied
+  var chunkIndex = 0;               // increments per successful POST
+  var pendingCaptureFlush = null;   // resolver fn for async flush before /assemble
 
   // ── DOM refs ──
   var timelineLoading = document.getElementById('timeline-loading');
@@ -458,6 +573,219 @@ nav {
   chatInput.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+
+  // ── Voice-capture (MediaRecorder) ──
+  // Audio of the storyteller's answer captured per-turn, POSTed to backend,
+  // then concatenated into the chapter audiobook on Finish.
+
+  var voiceCaptureRow = document.getElementById('voice-capture-row');
+  var voiceCaptureToggle = document.getElementById('voice-capture-toggle');
+  var voicePrivacyNote = document.getElementById('voice-privacy-note');
+  var voiceCaptureError = document.getElementById('voice-capture-error');
+  var finishChapterWrap = document.getElementById('finish-chapter-wrap');
+  var finishChapterBtn = document.getElementById('finish-chapter-btn');
+  var finishChapterHint = document.getElementById('finish-chapter-hint');
+  var audiobookReady = document.getElementById('audiobook-ready');
+  var audiobookMeta = document.getElementById('audiobook-meta');
+  var audiobookAudio = document.getElementById('audiobook-audio');
+  var audiobookLink = document.getElementById('audiobook-link');
+
+  function pickAudioMimeType() {
+    if (!window.MediaRecorder || !window.MediaRecorder.isTypeSupported) return '';
+    var candidates = [
+      'audio/webm;codecs=opus',  // Chrome, Firefox, Edge — preferred per spec
+      'audio/webm',
+      'audio/ogg;codecs=opus',
+      'audio/mp4'                // Safari
+    ];
+    for (var i = 0; i < candidates.length; i++) {
+      if (window.MediaRecorder.isTypeSupported(candidates[i])) return candidates[i];
+    }
+    return '';
+  }
+
+  voiceCaptureMime = pickAudioMimeType();
+  voiceCaptureSupported = !!voiceCaptureMime && !!navigator.mediaDevices && !!navigator.mediaDevices.getUserMedia;
+
+  function setVoiceCaptureUI(visible) {
+    if (visible) {
+      voiceCaptureRow.classList.remove('unsupported');
+      voicePrivacyNote.classList.remove('unsupported');
+    } else {
+      voiceCaptureRow.classList.add('unsupported');
+      voicePrivacyNote.classList.add('unsupported');
+    }
+  }
+
+  function showVoiceCaptureError(msg) {
+    voiceCaptureError.textContent = msg;
+    voiceCaptureError.classList.remove('hidden');
+    setTimeout(function() { voiceCaptureError.classList.add('hidden'); }, 6000);
+  }
+
+  // Probe the backend to see if the audio routes are deployed.
+  // Endpoints not yet wired? → silent fallback to text-only (no toggle shown).
+  function probeVoiceCaptureBackend() {
+    if (!voiceCaptureSupported) {
+      setVoiceCaptureUI(false);
+      return Promise.resolve(false);
+    }
+    return fetch(API_BASE + '/voice-sample/list?session_id=__probe__', { method: 'GET' })
+      .then(function(res) {
+        // 200 OK or 400 (expected — empty session) both prove route exists.
+        // 404 = route not deployed yet.
+        voiceCaptureBackendLive = (res.status === 200 || res.status === 400);
+        setVoiceCaptureUI(voiceCaptureBackendLive);
+        return voiceCaptureBackendLive;
+      })
+      .catch(function() {
+        voiceCaptureBackendLive = false;
+        setVoiceCaptureUI(false);
+        return false;
+      });
+  }
+
+  function shouldCaptureAudio() {
+    return voiceCaptureSupported
+      && voiceCaptureBackendLive
+      && voiceCaptureToggle.checked
+      && micPermissionState !== 'denied';
+  }
+
+  function startMediaRecorder() {
+    if (!shouldCaptureAudio()) return Promise.resolve(null);
+    // Reuse existing stream if still live (one mic-grant per session)
+    var streamPromise = (mediaStream && mediaStream.active)
+      ? Promise.resolve(mediaStream)
+      : navigator.mediaDevices.getUserMedia({ audio: true });
+
+    return streamPromise.then(function(stream) {
+      mediaStream = stream;
+      micPermissionState = 'granted';
+      recordedChunks = [];
+      try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: voiceCaptureMime });
+      } catch (e) {
+        // Mime rejected at construction time — fall back to default
+        mediaRecorder = new MediaRecorder(stream);
+      }
+      mediaRecorder.ondataavailable = function(ev) {
+        if (ev.data && ev.data.size > 0) recordedChunks.push(ev.data);
+      };
+      mediaRecorder.start();
+      return mediaRecorder;
+    }).catch(function(err) {
+      micPermissionState = 'denied';
+      // Mic denied — keep chat working, just hide the voice-capture UI.
+      setVoiceCaptureUI(false);
+      console.warn('Mic permission denied:', err && err.name);
+      return null;
+    });
+  }
+
+  // Stop the recorder, base64-encode the captured blob, POST to /voice-sample.
+  // Returns a Promise that resolves regardless of success (chat must continue).
+  function stopAndUploadChunk() {
+    return new Promise(function(resolve) {
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        resolve({ uploaded: false, reason: 'no-recorder' });
+        return;
+      }
+      mediaRecorder.onstop = function() {
+        var localChunks = recordedChunks;
+        recordedChunks = [];
+        mediaRecorder = null;
+        if (!localChunks.length) {
+          resolve({ uploaded: false, reason: 'empty' });
+          return;
+        }
+        var blob = new Blob(localChunks, { type: voiceCaptureMime || 'audio/webm' });
+        if (blob.size < 800) {
+          // Less than ~0.1s of audio — likely a stray click, skip
+          resolve({ uploaded: false, reason: 'too-short' });
+          return;
+        }
+        blobToBase64(blob).then(function(b64) {
+          var idx = chunkIndex;
+          chunkIndex++;
+          return fetch(API_BASE + '/voice-sample', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: sessionId,
+              chunk_index: idx,
+              mime: blob.type || voiceCaptureMime || 'audio/webm',
+              audio_blob: b64
+            })
+          });
+        }).then(function(res) {
+          if (!res.ok) throw new Error('voice-sample HTTP ' + res.status);
+          return res.json();
+        }).then(function(data) {
+          if (data && data.error) throw new Error(data.error);
+          // First successful chunk → reveal Finish-chapter button
+          if (chunkIndex >= 1) {
+            finishChapterWrap.style.display = 'block';
+            finishChapterHint.textContent = chunkIndex + ' answer' + (chunkIndex > 1 ? 's' : '') + ' captured.';
+          }
+          resolve({ uploaded: true, chunk_index: idx });
+        }).catch(function(err) {
+          console.warn('voice-sample upload failed:', err && err.message);
+          showVoiceCaptureError('Voice save hit a snag — your written answer was kept.');
+          resolve({ uploaded: false, reason: 'fetch-error' });
+        });
+      };
+      try { mediaRecorder.stop(); } catch(e) { resolve({ uploaded: false, reason: 'stop-error' }); }
+    });
+  }
+
+  function blobToBase64(blob) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        var s = reader.result || '';
+        var comma = s.indexOf(',');
+        resolve(comma >= 0 ? s.slice(comma + 1) : s);
+      };
+      reader.onerror = function() { reject(reader.error); };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  // Finish chapter — POST /assemble, then show public mp3 URL with playback
+  finishChapterBtn.addEventListener('click', function() {
+    if (chunkIndex < 1) return;
+    finishChapterBtn.disabled = true;
+    finishChapterBtn.textContent = 'Stitching your audiobook…';
+    fetch(API_BASE + '/voice-sample/assemble', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId })
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('assemble HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && data.error) throw new Error(data.error);
+      var publicUrl = API_HOST + '/v/' + STORYTELLER_ID + '/' + CHAPTER_ID + '/audio.mp3';
+      audiobookAudio.src = publicUrl;
+      audiobookLink.href = publicUrl;
+      audiobookLink.textContent = publicUrl;
+      var sizeKb = data && data.size_bytes ? Math.round(data.size_bytes / 1024) : null;
+      audiobookMeta.textContent = (data && data.chunk_count ? data.chunk_count + ' answers stitched' : '')
+        + (sizeKb ? ' · ' + sizeKb + ' KB' : '');
+      audiobookReady.style.display = 'block';
+      finishChapterWrap.style.display = 'none';
+      audiobookReady.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })
+    .catch(function(err) {
+      console.error('assemble failed:', err && err.message);
+      showVoiceCaptureError('Could not stitch the audiobook just now. Your saved answers are safe — try again in a moment.');
+      finishChapterBtn.disabled = false;
+      finishChapterBtn.textContent = 'Finish chapter — generate my audiobook';
+    });
   });
 
   // ── Speech Recognition — CONTINUOUS MODE ──
@@ -482,6 +810,10 @@ nav {
     recognition.interimResults = true;
     recognition.lang = 'en-US';
     finalTranscript = '';
+
+    // Audio capture runs in parallel with transcription (one mic-grant covers both).
+    // Failure here doesn't block the transcription path — chat continues either way.
+    startMediaRecorder();
 
     recognition.onstart = function() {
       isRecording = true;
@@ -865,7 +1197,7 @@ nav {
   // ── Send user message ──
   window.sendMessage = function() {
     if (sending) return;
-    // Stop recording if still active
+    // Stop recording if still active (transcription)
     if (isRecording) stopRecording();
     var text = chatInput.value.trim();
     if (!text) return;
@@ -873,6 +1205,13 @@ nav {
     sending = true;
     chatInput.value = '';
     chatInput.style.height = 'auto';
+
+    // Fire-and-forget upload of this answer's voice chunk. We don't block the
+    // chat flow on the upload — the chat continues, audio uploads in background.
+    // If upload fails, showVoiceCaptureError() surfaces a soft warning.
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      stopAndUploadChunk(); // returns promise, intentionally not awaited
+    }
 
     // If there's no pending question yet (first message on a page with history),
     // we need to start the conversation
@@ -961,6 +1300,10 @@ nav {
   };
 
   // ── Init ──
+  // Probe voice-capture backend in parallel with history load. The toggle
+  // stays hidden until both browser support and live endpoints are confirmed,
+  // so this page is forward-compatible with backend deployment timing.
+  probeVoiceCaptureBackend();
   loadHistory();
 
 })();
