@@ -1,28 +1,29 @@
-# Auto-trigger Netlify deploy on push to main.
+# Auto-deploy keptvoices repo to Netlify on push to main.
 #
-# Why this exists: same pattern as aiciv-inc-site — Netlify GitHub App
-# integrations have been intermittently dropping push events (observed
-# 2026-05-03 → 2026-05-04). This workflow POSTs to the
-# `github-actions-keptvoices` Netlify build hook on every push to main so
-# deploys are guaranteed regardless of the GitHub App's state.
+# Why direct CLI deploy (not build hook): the keptvoices Netlify site
+# (3df560c5-5967-4502-aa8d-82045c83a3cc) is not linked to a git repo —
+# build hooks return 200 but trigger no build because Netlify has no
+# source to fetch. We deploy the working tree directly using netlify-cli.
 #
-# Build hook ID: 69f8d59d9c412cd6b1ec32bd
-# Site: keptvoices (3df560c5-5967-4502-aa8d-82045c83a3cc) → keptvoices.com
-#
-# If the Netlify GitHub App is connected, BOTH triggers will fire on push —
-# Netlify de-dupes concurrent builds, so this is harmless.
+# Site: keptvoices (3df560c5-...) → keptvoices.com
+# Auth: NETLIFY_AUTH_TOKEN secret (Corey's personal token, repo-scoped)
+# Site ID: NETLIFY_SITE_ID secret
 
-name: Trigger Netlify Deploy
+name: Deploy to Netlify
 on:
   push:
     branches: [main]
 
 jobs:
-  trigger:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: POST to Netlify build hook
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
-          curl -fsS -X POST -d '{}' \
-            https://api.netlify.com/build_hooks/69f8d59d9c412cd6b1ec32bd
-          echo "Triggered Netlify build for commit ${GITHUB_SHA}"
+          npx --yes netlify-cli deploy --prod --dir=. --message="GHA deploy ${GITHUB_SHA::8}"
