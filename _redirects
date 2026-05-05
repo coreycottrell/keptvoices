@@ -1,0 +1,8 @@
+# Subject-facing gift landing — token in URL path, SPA-style serve.
+# All /gift/* paths route to /gift/index.html which reads the token from
+# location.pathname and calls /api/keptvoices/gift/resolve/{token}.
+/gift/*  /gift/index.html  200!
+
+# Stripe checkout success redirect target — thank-you page reads
+# ?session_id={CHECKOUT_SESSION_ID} and calls /api/keptvoices/gift-link/by-session/{sid}.
+# (No rewrite needed if /thank-you.html exists; left here for visibility.)

@@ -1,4 +1,5 @@
 node_modules/
 .netlify/
-package.json
-package-lock.json
+# Root-level dev cruft only; netlify/functions/package.json IS tracked.
+/package.json
+/package-lock.json
