@@ -97,6 +97,10 @@ exports.handler = async (event) => {
     }
   }
 
+  const purchasedLookupKeys = metadata.kv_purchased_lookup_keys
+    ? String(metadata.kv_purchased_lookup_keys).split(',').map((s) => s.trim()).filter(Boolean)
+    : null;
+
   const payload = {
     stripe_session_id: session.id,
     stripe_payment_intent: session.payment_intent || null,
@@ -113,6 +117,7 @@ exports.handler = async (event) => {
     referral_code: metadata.kv_referral_code || null,
     subject_hint: metadata.kv_subject_hint || null,
     onboarding_register: metadata.kv_onboarding_register || 'register_3_buyer_voice_first',
+    purchased_lookup_keys: purchasedLookupKeys,
   };
 
   try {
